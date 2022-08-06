@@ -5,8 +5,8 @@
 #include <fcntl.h>
 #include "lint.h"
 #include "config.h"
-
-#define FUNC_SPEC 	"make list_funcs"
+#include <unistd.h>
+#define FUNC_SPEC		"list_funcs.txt"
 #define FUNC_TOKENS 	"efun_tokens.y"
 #define PRE_LANG        "prelang.y"
 #define POST_LANG       "postlang.y"
@@ -32,18 +32,19 @@ int arg_types[200], last_current_type;
  */
 int curr_arg_types[MAX_LOCAL], curr_arg_type_size;
 
-void yyerror PROT((char *));
+void yyerror(const char *);
 int yylex();
 int yyparse();
-int ungetc PROT((int c, FILE *f));
-char *type_str PROT((int)), *etype PROT((int)), *etype1 PROT((int)),
-   *ctype PROT((int));
+int ungetc(int c, FILE *f);
+char* type_str(int);
+char* etype(int);
+char* etype1(int);
+char* ctype(int);
 #ifndef toupper
-int toupper PROT((int));
+int toupper(int);
 #endif
 
-void fatal(str)
-    char *str;
+void fatal(char* str)
 {
     fprintf(stderr, "%s", str);
     exit(1);
@@ -76,7 +77,7 @@ optional_default: DEFAULT ':' ID { $$ = $3; } | /* empty */ { $$="0"; } ;
 
 func: type ID optional_ID '(' arg_list optional_default ')' ';'
     {
-	char buff[517];
+	char buff[525];
 	char f_name[500];
 	int i;
 	if (min_arg == -1)
@@ -178,14 +179,12 @@ struct type {
 FILE *f;
 int current_line = 1;
 
-int main(argc, argv)
-    int argc;
-    char **argv;
+int main(int argc, char **argv)
 {
     int i, fdr, fdw;
     char buffer[MAKE_FUNC_BUFSIZ + 1];
 
-    if ((f = popen(FUNC_SPEC, "r")) == NULL) { 
+    if ((f = fopen(FUNC_SPEC, "r")) == NULL) { 
 	perror(FUNC_SPEC);
 	exit(1);
     }
@@ -254,15 +253,13 @@ int main(argc, argv)
     return 0;
 }
 
-void yyerror(str)
-    char *str;
+void yyerror(const char *str)
 {
     fprintf(stderr, "%s:%d: %s\n", FUNC_SPEC, current_line, str);
     exit(1);
 }
 
-int ident(c)
-    int c;
+int ident(int c)
 {
     char buff[100];
     int len, i;
@@ -286,13 +283,12 @@ int ident(c)
     }
     if (strcmp(buff, "default") == 0)
 	return DEFAULT;
-    yylval.string = malloc(strlen(buff)+1);
+    yylval.string = (char*)malloc(strlen(buff)+1);
     strcpy(yylval.string, buff);
     return ID;
 }
 
-char *type_str(n)
-    int n;
+char *type_str(int n)
 {
     int i, type = n & 0xffff;
 
@@ -313,36 +309,33 @@ char *type_str(n)
 
 int yylex1() {
     register int c;
-    
+
     for(;;) {
-	switch(c = getc(f)) {
+		switch(c = getc(f)) {
 	case ' ':
 	case '\t':
-	    continue;
+		continue;
 	case '#':
 	{
-#ifdef sun /* no prototype in <stdio.h> *sigh* */
-	    extern int fscanf PROT((FILE *, char *, ...));
-#endif
-	    int line;
-	    char file[2048]; /* does any operating system support
+		int line;
+		char file[2048]; /* does any operating system support
 				longer pathnames? */
-	    if ( fscanf(f,"%d \"%s\"",&line,file ) == 2 )
+		if ( fscanf(f,"%d \"%s\"",&line,file ) == 2 )
 		current_line = line;
-	    while(c != '\n' && c != EOF)
+		while(c != '\n' && c != EOF)
 		c = getc(f);
-	    current_line++;
-	    continue;
+		current_line++;
+		continue;
 	}
 	case '\n':
-	    current_line++;
-	    continue;
+		current_line++;
+		continue;
 	case EOF:
-	    return -1;
+		return -1;
 	default:
-	    if (isalpha(c))
+		if (isalpha(c))
 		return ident(c);
-	    return c;
+		return c;
 	}
     }
 }
@@ -351,8 +344,7 @@ int yylex() {
     return yylex1();
 }
 
-char *etype1(n)
-    int n;
+char *etype1(int n)
 {
     if (n & 0x10000)
 	return "T_POINTER";
@@ -371,12 +363,11 @@ char *etype1(n)
     return "What ?";
 }
 
-char *etype(n)
-    int n;
+char *etype(int n)
 {
     int i;
     int local_size = 100;
-    char *buff = malloc(local_size);
+    char *buff = (char*)malloc(local_size);
 
     for (i=0; i < curr_arg_type_size; i++) {
 	if (n == 0)
@@ -407,8 +398,7 @@ char *etype(n)
     return buff;
 }
 
-char *ctype(n)
-    int n;
+char *ctype( int n)
 {
     static char buff[100];	/* 100 is such a comfortable size :-) */
     char *p;

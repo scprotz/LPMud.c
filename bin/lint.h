@@ -32,7 +32,7 @@ int sscanf(char *, char *, ...);
 void perror(char *);
 #endif
 
-int read PROT((int, char *, int));
+//int read PROT((int, char *, int));
 //#ifndef _AIX
 //char *malloc PROT((unsigned));
 //char *realloc PROT((char *, unsigned));
@@ -46,12 +46,12 @@ int pclose PROT_STDIO((FILE *));
 //#ifndef sgi
 //void srandom PROT((int));
 //#endif
-int chdir PROT((char *));
-int gethostname PROT((char *, int));
+//int chdir PROT((char *));
+//int gethostname PROT((char *, int));
 void abort PROT((void));
 int fflush PROT_STDIO((FILE *));
-int rmdir PROT((char *));
-int unlink PROT((char *));
+//int rmdir PROT((char *));
+//int unlink PROT((char *));
 int fclose PROT_STDIO((FILE *));
 //#ifndef M_UNIX
 //#ifndef sgi
@@ -63,7 +63,7 @@ int fseek PROT_STDIO((FILE *, long, int));
 int _flsbuf();
 int fork PROT((void));
 int wait PROT((int *));
-int execl PROT((char *, char *, ...));
+//int execl PROT((char *, char *, ...));
 int pipe PROT((int *));
 int dup2 PROT((int, int));
 int vfork PROT((void));
@@ -73,12 +73,12 @@ void exit PROT((int));
 unsigned int alarm PROT((unsigned int));
 //int ioctl PROT((int, ...));
 int close PROT((int));
-int write PROT((int, char *, int));
+//int write PROT((int, char *, int));
 int _filbuf();
-char *crypt PROT((char *, char *));
-#ifdef sun
-char *_crypt PROT((char *, char *));
-#endif
+//char *crypt PROT((char *, char *));
+//#ifdef sun
+//char *_crypt PROT((char *, char *));
+//#endif
 
 #ifdef DRAND48
 double drand48 PROT((void));
@@ -89,8 +89,8 @@ long random PROT((void));
 #endif
 
 //long strtol PROT((char *, char **, int));
-int link PROT((char *, char *));
-int unlink PROT((char *));
+//int link PROT((char *, char *));
+//int unlink PROT((char *));
 #endif
 
 struct object;
@@ -157,7 +157,7 @@ void set_living_name PROT((struct object *,char *));
 void remove_living_name PROT((struct object *));
 struct object *find_living_object PROT((char *, int));
 int lookup_predef PROT((char *));
-void yyerror PROT((char *));
+//void yyerror PROT((char *));
 int hashstr PROT((char *, int, int));
 int lookup_predef PROT((char *));
 char *dump_trace PROT((int));
@@ -221,7 +221,7 @@ int heart_beat_status PROT((int verbose));
 void opcdump PROT((void));
 void slow_shut_down PROT((int));
 struct vector *allocate_array PROT((int));
-void yyerror PROT((char *));
+void yyerror(const char*);
 void reset_machine PROT((int));
 void clear_state PROT((void));
 void load_first_objects PROT((void));

@@ -2077,8 +2077,7 @@ optional_else_part: /* empty */
        | F_ELSE statement ;
 %%
 
-void yyerror(str)
-char *str;
+void yyerror(const char* str)
 {
     extern int num_parse_error;
 

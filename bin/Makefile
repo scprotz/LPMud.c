@@ -185,6 +185,7 @@ array.o: interpret.h object.h config.h wiz_list.h regexp.h exec.h
 access_check.o: config.h
 
 lang.y efun_defs.c: func_spec.c make_func prelang.y postlang.y config.h
+	@$(CC) -E $(CFLAGS) func_spec.c > list_funcs.txt 
 	./make_func > efun_defs.c
 
 simul_efun.o: interpret.h object.h exec.h

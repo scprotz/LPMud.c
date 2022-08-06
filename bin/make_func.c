@@ -74,8 +74,8 @@
 #include <fcntl.h>
 #include "lint.h"
 #include "config.h"
-
-#define FUNC_SPEC 	"make list_funcs"
+#include <unistd.h>
+#define FUNC_SPEC		"list_funcs.txt"
 #define FUNC_TOKENS 	"efun_tokens.y"
 #define PRE_LANG        "prelang.y"
 #define POST_LANG       "postlang.y"
@@ -101,25 +101,26 @@ int arg_types[200], last_current_type;
  */
 int curr_arg_types[MAX_LOCAL], curr_arg_type_size;
 
-void yyerror PROT((char *));
+void yyerror(const char *);
 int yylex();
 int yyparse();
-int ungetc PROT((int c, FILE *f));
-char *type_str PROT((int)), *etype PROT((int)), *etype1 PROT((int)),
-   *ctype PROT((int));
+int ungetc(int c, FILE *f);
+char* type_str(int);
+char* etype(int);
+char* etype1(int);
+char* ctype(int);
 #ifndef toupper
-int toupper PROT((int));
+int toupper(int);
 #endif
 
-void fatal(str)
-    char *str;
+void fatal(char* str)
 {
     fprintf(stderr, "%s", str);
     exit(1);
 }
 
 
-#line 123 "y.tab.c"
+#line 124 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -188,12 +189,12 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 53 "make_func.y"
+#line 54 "make_func.y"
 
     int number;
     char *string;
 
-#line 197 "y.tab.c"
+#line 198 "y.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -569,9 +570,9 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    71,    71,    71,    73,    73,    75,    75,    77,   134,
-     134,   136,   136,   136,   136,   136,   136,   138,   139,   140,
-     142,   150,   160,   161,   162
+       0,    72,    72,    72,    74,    74,    76,    76,    78,   135,
+     135,   137,   137,   137,   137,   137,   137,   139,   140,   141,
+     143,   151,   161,   162,   163
 };
 #endif
 
@@ -1380,27 +1381,27 @@ yyreduce:
   switch (yyn)
     {
   case 5:
-#line 73 "make_func.y"
+#line 74 "make_func.y"
                               { (yyval.string) = ""; }
-#line 1386 "y.tab.c"
+#line 1387 "y.tab.c"
     break;
 
   case 6:
-#line 75 "make_func.y"
+#line 76 "make_func.y"
                                  { (yyval.string) = (yyvsp[0].string); }
-#line 1392 "y.tab.c"
+#line 1393 "y.tab.c"
     break;
 
   case 7:
-#line 75 "make_func.y"
+#line 76 "make_func.y"
                                                             { (yyval.string)="0"; }
-#line 1398 "y.tab.c"
+#line 1399 "y.tab.c"
     break;
 
   case 8:
-#line 78 "make_func.y"
+#line 79 "make_func.y"
     {
-	char buff[517];
+	char buff[525];
 	char f_name[500];
 	int i;
 	if (min_arg == -1)
@@ -1454,46 +1455,46 @@ yyreduce:
 	limit_max = 0;
 	curr_arg_type_size = 0;
     }
-#line 1458 "y.tab.c"
+#line 1459 "y.tab.c"
     break;
 
   case 10:
-#line 134 "make_func.y"
+#line 135 "make_func.y"
                         { (yyval.number) = (yyvsp[-1].number) | 0x10000; }
-#line 1464 "y.tab.c"
+#line 1465 "y.tab.c"
     break;
 
   case 17:
-#line 138 "make_func.y"
+#line 139 "make_func.y"
                                 { (yyval.number) = 0; }
-#line 1470 "y.tab.c"
+#line 1471 "y.tab.c"
     break;
 
   case 18:
-#line 139 "make_func.y"
+#line 140 "make_func.y"
                                         { (yyval.number) = 1; if ((yyvsp[0].number)) min_arg = 0; }
-#line 1476 "y.tab.c"
+#line 1477 "y.tab.c"
     break;
 
   case 19:
-#line 140 "make_func.y"
+#line 141 "make_func.y"
                                 { (yyval.number) = (yyvsp[-2].number) + 1; if ((yyvsp[0].number)) min_arg = (yyval.number) - 1; }
-#line 1482 "y.tab.c"
+#line 1483 "y.tab.c"
     break;
 
   case 20:
-#line 143 "make_func.y"
+#line 144 "make_func.y"
     {
 	(yyval.number) = (yyvsp[0].number);
 	curr_arg_types[curr_arg_type_size++] = 0;
 	if (curr_arg_type_size == NELEMS(curr_arg_types))
 	    yyerror("Too many arguments");
     }
-#line 1493 "y.tab.c"
+#line 1494 "y.tab.c"
     break;
 
   case 21:
-#line 151 "make_func.y"
+#line 152 "make_func.y"
     {
 	if ((yyvsp[0].number) != VOID) {
 	    curr_arg_types[curr_arg_type_size++] = (yyvsp[0].number);
@@ -1502,29 +1503,29 @@ yyreduce:
 	}
 	(yyval.number) = (yyvsp[0].number);
     }
-#line 1506 "y.tab.c"
+#line 1507 "y.tab.c"
     break;
 
   case 22:
-#line 160 "make_func.y"
+#line 161 "make_func.y"
                                 { (yyval.number) = ((yyvsp[0].number) == VOID && min_arg == -1); }
-#line 1512 "y.tab.c"
+#line 1513 "y.tab.c"
     break;
 
   case 23:
-#line 161 "make_func.y"
+#line 162 "make_func.y"
                                 { (yyval.number) = (min_arg == -1 && ((yyvsp[-2].number) || (yyvsp[0].number) == VOID));}
-#line 1518 "y.tab.c"
+#line 1519 "y.tab.c"
     break;
 
   case 24:
-#line 162 "make_func.y"
+#line 163 "make_func.y"
                                 { (yyval.number) = min_arg == -1 ; limit_max = 1; }
-#line 1524 "y.tab.c"
+#line 1525 "y.tab.c"
     break;
 
 
-#line 1528 "y.tab.c"
+#line 1529 "y.tab.c"
 
       default: break;
     }
@@ -1756,7 +1757,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 164 "make_func.y"
+#line 165 "make_func.y"
 
 
 struct type {
@@ -1774,14 +1775,12 @@ struct type {
 FILE *f;
 int current_line = 1;
 
-int main(argc, argv)
-    int argc;
-    char **argv;
+int main(int argc, char **argv)
 {
     int i, fdr, fdw;
     char buffer[MAKE_FUNC_BUFSIZ + 1];
 
-    if ((f = popen(FUNC_SPEC, "r")) == NULL) { 
+    if ((f = fopen(FUNC_SPEC, "r")) == NULL) { 
 	perror(FUNC_SPEC);
 	exit(1);
     }
@@ -1850,15 +1849,13 @@ int main(argc, argv)
     return 0;
 }
 
-void yyerror(str)
-    char *str;
+void yyerror(const char *str)
 {
     fprintf(stderr, "%s:%d: %s\n", FUNC_SPEC, current_line, str);
     exit(1);
 }
 
-int ident(c)
-    int c;
+int ident(int c)
 {
     char buff[100];
     int len, i;
@@ -1882,13 +1879,12 @@ int ident(c)
     }
     if (strcmp(buff, "default") == 0)
 	return DEFAULT;
-    yylval.string = malloc(strlen(buff)+1);
+    yylval.string = (char*)malloc(strlen(buff)+1);
     strcpy(yylval.string, buff);
     return ID;
 }
 
-char *type_str(n)
-    int n;
+char *type_str(int n)
 {
     int i, type = n & 0xffff;
 
@@ -1909,36 +1905,33 @@ char *type_str(n)
 
 int yylex1() {
     register int c;
-    
+
     for(;;) {
-	switch(c = getc(f)) {
+		switch(c = getc(f)) {
 	case ' ':
 	case '\t':
-	    continue;
+		continue;
 	case '#':
 	{
-#ifdef sun /* no prototype in <stdio.h> *sigh* */
-	    extern int fscanf PROT((FILE *, char *, ...));
-#endif
-	    int line;
-	    char file[2048]; /* does any operating system support
+		int line;
+		char file[2048]; /* does any operating system support
 				longer pathnames? */
-	    if ( fscanf(f,"%d \"%s\"",&line,file ) == 2 )
+		if ( fscanf(f,"%d \"%s\"",&line,file ) == 2 )
 		current_line = line;
-	    while(c != '\n' && c != EOF)
+		while(c != '\n' && c != EOF)
 		c = getc(f);
-	    current_line++;
-	    continue;
+		current_line++;
+		continue;
 	}
 	case '\n':
-	    current_line++;
-	    continue;
+		current_line++;
+		continue;
 	case EOF:
-	    return -1;
+		return -1;
 	default:
-	    if (isalpha(c))
+		if (isalpha(c))
 		return ident(c);
-	    return c;
+		return c;
 	}
     }
 }
@@ -1947,8 +1940,7 @@ int yylex() {
     return yylex1();
 }
 
-char *etype1(n)
-    int n;
+char *etype1(int n)
 {
     if (n & 0x10000)
 	return "T_POINTER";
@@ -1967,12 +1959,11 @@ char *etype1(n)
     return "What ?";
 }
 
-char *etype(n)
-    int n;
+char *etype(int n)
 {
     int i;
     int local_size = 100;
-    char *buff = malloc(local_size);
+    char *buff = (char*)malloc(local_size);
 
     for (i=0; i < curr_arg_type_size; i++) {
 	if (n == 0)
@@ -2003,8 +1994,7 @@ char *etype(n)
     return buff;
 }
 
-char *ctype(n)
-    int n;
+char *ctype( int n)
 {
     static char buff[100];	/* 100 is such a comfortable size :-) */
     char *p;

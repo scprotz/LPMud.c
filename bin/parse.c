@@ -19,7 +19,7 @@
 #include "object.h"
 #include "wiz_list.h"
 
-extern char *string_copy(char *), *xalloc(int);
+extern char *string_copy(const char *), *xalloc(int);
 extern int d_flag; /* for debugging purposes */
 extern struct object *previous_ob;
 

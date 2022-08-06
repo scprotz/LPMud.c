@@ -97,7 +97,7 @@ void merge(name, dest)
     char *from;
 
     strcpy(dest, current_file);
-    if (from = strrchr(dest, '/'))   /* strip filename */
+    if ((from = strrchr(dest, '/')))   /* strip filename */
 	*from = 0;
     else
 	/* current_file was the file_name */
@@ -662,7 +662,7 @@ yylex1()
 		struct defn *d;
 
 		deltrail(sp);
-		if (d = lookup_define(sp))
+		if ((d = lookup_define(sp)))
 		    d->undef++;
 	    } else if (strcmp("echo", yytext) == 0) {
 		fprintf(stderr, "%s\n", sp);
@@ -1273,7 +1273,7 @@ int nargs;
     struct defn *p;
     int h;
 
-    if (p = lookup_define(name)) {
+    if ((p = lookup_define(name))) {
 	if (nargs != p->nargs || strcmp(exps, p->exps) != 0) {
 	    char buf[200+NSIZE];
 	    sprintf(buf, "Redefinition of #define %s", name);

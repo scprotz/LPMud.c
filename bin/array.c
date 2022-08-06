@@ -231,22 +231,21 @@ struct vector *users() {
 /*
  * Check that an assignment to an array item is not cyclic.
  */
-static void check_for_recursion(vec, v)
-    struct vector *vec, *v;
-{
-    register int i;
-    extern int eval_cost;
-
-    if (vec->user)
-	vec->user->cost++;
-    eval_cost++;
-    if (v == vec)
-	error("Recursive asignment of vectors.\n");
-    for (i=0; i<v->size; i++) {
-	if (v->item[i].type == T_POINTER)
-	    check_for_recursion(vec, v->item[i].u.vec);
-    }
-}
+//static void check_for_recursion(struct vector* vec, struct vector* v)
+//{
+//    register int i;
+//    extern int eval_cost;
+//
+//    if (vec->user)
+//	vec->user->cost++;
+//    eval_cost++;
+//    if (v == vec)
+//	error("Recursive asignment of vectors.\n");
+//    for (i=0; i<v->size; i++) {
+//	if (v->item[i].type == T_POINTER)
+//	    check_for_recursion(vec, v->item[i].u.vec);
+//    }
+//}
 
 /*
  * Slice of an array.
@@ -802,8 +801,8 @@ static INLINE int alist_cmp(p1, p2)
 {
     register int d;
 
-    if (d = p1->u.number - p2->u.number) return d;
-    if (d = p1->type - p2->type) return d;
+    if ((d = p1->u.number - p2->u.number)) return d;
+    if ((d = p1->type - p2->type)) return d;
     return 0;
 }
 

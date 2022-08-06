@@ -1,5 +1,5 @@
 #include <sys/types.h>
-#include <sys/time.h>
+//#include <sys/time.h>
 
 #include "lint.h"
 
@@ -46,8 +46,7 @@ int get_current_time() {
     return (int)time(0l);	/* Just use the old time() for now */
 }
 
-char *time_string(t)
-    int t;
+char* time_string(int t)
 {
-    return ctime((time_t *)&t);
+    return (char*) ctime((time_t *)&t);
 }

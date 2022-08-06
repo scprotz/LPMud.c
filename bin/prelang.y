@@ -130,7 +130,7 @@ static int check_declared(char *str);
 static void prolog();
 static char *get_two_types(int type1, int type2);
 void free_all_local_names(),
-    add_local_name(char *, int), smart_log(char *, int, char *);
+    add_local_name(char *, int), smart_log(char *, int, const char *);
 extern int yylex();
 static int verify_declared(char *);
 static void copy_variables();

@@ -747,7 +747,7 @@ char *read_bytes(file,start,len)
 
     char *str,*p;
     int size, f;
-    int lseek();
+//    int lseek();
 
     if (len < 0)
 	return 0;
@@ -818,7 +818,7 @@ int write_bytes(file,start,str)
     struct stat st;
 
     int size, f;
-    int lseek();
+//    int lseek();
 
 #ifdef COMPAT_MODE    
     file = check_file_name(file, 1);

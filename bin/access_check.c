@@ -35,7 +35,8 @@ extern char *inet_ntoa(), *strtok();
 #define ACCESS_FILE "ACCESS.ALLOW"
 
 /* log-file to show valid and rejected connections */
-#undef ACCESS_LOG "access.allow.log" /* simply NOT define this for NO logs*/
+#undef ACCESS_LOG /* simply NOT define this for NO logs*/
+// #define ACCESS_LOG "access.allow.log"
 
 /* maximal string length to be output */
 #define MAX_MESSAGE 255
@@ -85,7 +86,7 @@ check_read_file (name)
 	  class_tab = (struct access_class *)
 	      malloc (class_tab_size * sizeof (struct access_class));
 	  
-	  if (in = fopen (name, "r"))
+	  if ((in = fopen (name, "r")))
 	    {
 	      while (!feof (in))
 		{
@@ -173,7 +174,7 @@ allow_host_access (sockfd, outfd)
 {
   struct sockaddr_in apa;
   int addr[4];
-  int len;
+  socklen_t len;
   char *ipname;
   struct access_address *ap;
   int i;

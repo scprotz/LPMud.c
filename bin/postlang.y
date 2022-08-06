@@ -363,8 +363,8 @@ switch: F_SWITCH '(' comma_expr ')'
 	/* int size_without_table; */
 	int block_index;
 	int current_case_heap;
-	int lookup_start;
-	int lookup_start_key;
+//	int lookup_start;
+//	int lookup_start_key;
 
 	current_break_address &= ~(BREAK_ON_STACK|BREAK_FROM_CASE);
 
@@ -383,7 +383,7 @@ switch: F_SWITCH '(' comma_expr ')'
 	    if (zero_case_label&0xffff) {
 		struct case_heap_entry temp;
 
-		temp.key = ZERO_AS_STR_CASE_LABEL;
+		temp.key = (int)ZERO_AS_STR_CASE_LABEL;
 		temp.addr = zero_case_label;
 		temp.line = 0; /* if this is accessed later, something is
 				* really wrong				  */
@@ -405,8 +405,8 @@ switch: F_SWITCH '(' comma_expr ')'
 	* how much switch is used at all when it is full-featured...
 	*/
 	mem_block[A_CASE_LABELS].current_size = 0;
-	lookup_start = 0;
-	lookup_start_key = ((struct case_heap_entry*)heap_start)->key;
+//	lookup_start = 0;
+//	lookup_start_key = ((struct case_heap_entry*)heap_start)->key;
         for( ; ((struct case_heap_entry*)heap_start)->addr; )
         {
             int offset;

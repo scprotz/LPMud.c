@@ -332,7 +332,7 @@ void add_message(fmt, a1, a2, a3, a4, a5, a6, a7, a8, a9)
     if (from)
         strncpy( ip->message_buf, buff+from, length );
     if ( length && !old_message_length ) { /* buffer became 'dirty' */
-	if ( ip->next_player_for_flush = first_player_for_flush ) {
+	if ( (ip->next_player_for_flush = first_player_for_flush) ) {
 	    first_player_for_flush->interactive->previous_player_for_flush =
 		command_giver;
 	}
@@ -434,7 +434,7 @@ int get_message(buff, size)
     while(1) {
 	int new_socket;
 	struct sockaddr_in addr;
-	int length;
+	socklen_t length;
 	struct timeval timeout;
 
 	/* First, try to get a new player... */

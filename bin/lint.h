@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <time.h>
 /*
  * Some structure forward declarations are needed.
  */
@@ -6,7 +10,6 @@ struct function;
 struct svalue;
 struct sockaddr;
 
-#include <stdio.h>
 
 //#ifdef BUFSIZ
 //#    definexx
@@ -97,7 +100,7 @@ long random(void);
 
 struct object;
 char *get_error_file(char *);
-void save_error(char *, char *, int);
+void save_error(const char *, char *, int);
 int write_file(char *, char *);
 int file_size(char *);
 char *check_file_name(char *, int);
@@ -182,11 +185,11 @@ struct vector *deep_inventory(struct object *, int);
 struct object *environment(struct svalue *);
 struct vector *add_array(struct vector *, struct vector *);
 char *get_f_name(int);
-#ifndef _AIX
-void startshutdowngame(void);
-#else
+//#ifndef _AIX
+//void startshutdowngame(void);
+//#else
 void startshutdowngame(int);
-#endif
+//#endif
 void set_notify_fail_message(char *);
 int swap(struct object *);
 int transfer_object(struct object *, struct object *);
@@ -251,7 +254,7 @@ void logon(struct object *ob);
 struct svalue *apply_master_ob(char *fun, int num_arg);
 void assert_master_ob_loaded();
 struct vector *explode_string(char *str, char *del);
-char *string_copy(char *);
+char *string_copy(const char *);
 int find_call_out(struct object *ob, char *fun);
 void remove_object_from_stack(struct object *ob);
 //#ifndef sgi

@@ -64,7 +64,7 @@ void dumpstat() {
 	fprintf(f, "%-20s %5d ref %2d %s %s (%ld) %s\n", ob->name,
 		tmp + data_size(ob) + sizeof (struct object), ob->ref,
 		ob->flags & O_HEART_BEAT ? "HB" : "  ",
-		ob->super ? ob->super->name : "--",/*ob->cpu*/ 0,
+		ob->super ? ob->super->name : "--",/*ob->cpu*/ 0l,
 		ob->swap_num >=0 ? "SWAPPED" : "");
     }
     add_message("done.\n");

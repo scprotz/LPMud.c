@@ -237,8 +237,7 @@ int main(argc, argv)
     return 0;
 }
 
-char *string_copy(str)
-    char *str;
+char *string_copy(const char* str)
 {
     char *p;
 
@@ -253,7 +252,7 @@ void debug_message(a, b, c, d, e, f, g, h, i, j)
     int b, c, d, e, f, g, h, i, j;
 {
     static FILE *fp = NULL;
-    char deb[100];
+    char deb[111];
     char name[100];
 
     if (fp == NULL) {
@@ -361,7 +360,7 @@ static void start_ip_demon()
         close(fromchild[1]);
 	if (strlen(BINDIR) + 7 <= sizeof path) {
 	    sprintf(path, "%s/hname", BINDIR);
-	    execl((char *)path, "hname", 0);
+	    execl((char *)path, "hname", (char*) NULL);
 	}
 	write(1, "0", 1);	/* indicate failure */
         fprintf(stderr, "exec of hname failed.\n");

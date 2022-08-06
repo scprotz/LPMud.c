@@ -147,7 +147,7 @@ char * string;
 	NEXT(s) = base_table[h];
 	base_table[h] = s;
 	num_distinct_strings++;
-	bytes_distinct_strings += 4 + (strlen(s) +3) & ~3;
+	bytes_distinct_strings += (4 + (strlen(s) +3)) & ~3;
 	overhead_bytes += sizeof(char *) + sizeof(short);
 	return(s);
 }
@@ -162,7 +162,7 @@ char * str;
 		s = alloc_new_string(str);
 	REFS(s)++;
 	allocd_strings++;
-	allocd_bytes += 4 + (strlen(str) + 3) & ~3;
+	allocd_bytes += (4 + (strlen(str) + 3)) & ~3;
 	return(s);
 }
 
@@ -193,7 +193,7 @@ char * str;
 	char * s;
 
 	allocd_strings--;
-	allocd_bytes -= 4 + (strlen(str) + 3) & ~3;
+	allocd_bytes -= (4 + (strlen(str) + 3)) & ~3;
 
 #ifndef	BUG_FREE
 #ifdef	dcheck	/* GNU malloc range check flag */
@@ -230,7 +230,7 @@ char * str;
 	base_table[StrHash(str)] = NEXT(s);
 	num_distinct_strings--;
 	/* We know how much overhead malloc has */
-	bytes_distinct_strings-= 4 + (strlen(s) + 3) & ~3;
+	bytes_distinct_strings-= (4 + (strlen(s) + 3)) & ~3;
 	overhead_bytes -= sizeof(short) + sizeof(char *);
 	free(s-sizeof(short)-sizeof(char *));
 

@@ -1,4 +1,4 @@
-time_to_heal 8
+time_to_heal 4
 money 0
 name "scprotz"
 msgin "arrives"
@@ -14,7 +14,7 @@ mmsgout "disappears in a puff of smoke"
 mmsgin "arrives in a puff of smoke"
 ghost 0
 spell_points 1
-age 3
+age 7
 is_invis 0
 frog 0
 whimpy 0

@@ -1269,7 +1269,7 @@ again:
 	break;
 #endif
     CASE(F_SHUTDOWN);
-	startshutdowngame();
+	startshutdowngame(1);
 	push_number(0);
 	break;
     CASE(F_EXPLODE);
@@ -1337,7 +1337,7 @@ again:
 	    memset(str + old_len, ' ', len - old_len);
 	if (str[ind] > 0x3f + ' ' || str[ind] < ' ')
 	    error("Illegal bit pattern in set_bit character %d\n", ind);
-	str[ind] = (str[ind] - ' ' | 1 << sp->u.number % 6) + ' ';
+	str[ind] = ( (str[ind] - ' ') | 1 << (sp->u.number % 6)) + ' ';
 	pop_n_elems(2);
 	sp++;
 	sp->u.string = str;
@@ -1363,7 +1363,7 @@ again:
 	memcpy(str, (sp-1)->u.string, len+1);	/* Including null byte */
 	if (str[ind] > 0x3f + ' ' || str[ind] < ' ')
 	    error("Illegal bit pattern in clear_bit character %d\n", ind);
-	str[ind] = (str[ind] - ' ' & ~(1 << sp->u.number % 6)) + ' ';
+	str[ind] = ((str[ind] - ' ') & ~(1 << (sp->u.number % 6))) + ' ';
 	pop_n_elems(2);
 	sp++;
 	sp->type = T_STRING;
@@ -1381,7 +1381,7 @@ again:
 	    push_number(0);
 	    break;
 	}
-	if ((sp-1)->u.string[sp->u.number/6] - ' ' & 1 << sp->u.number % 6) {
+	if (((sp-1)->u.string[sp->u.number/6] - ' ') & (1 << (sp->u.number % 6))) {
 	    pop_n_elems(2);
 	    push_number(1);
 	} else {
@@ -2341,7 +2341,7 @@ again:
 #else
 	    res = add_slash(str);
 #endif
-	    if (str = strrchr (res, '.'))
+	    if ((str = strrchr (res, '.')))
 		*str = 0;
 	    push_malloced_string(res);
 	} else {
@@ -2623,7 +2623,7 @@ again:
 	if ( ( i = EXTRACT_UCHAR(pc) >> 4 ) != 0xf ) {
 	    if ( sp->type == T_NUMBER && !sp->u.number ) {
 		/* special case: uninitalized string */
-		s = ZERO_AS_STR_CASE_LABEL;
+		s = (int)ZERO_AS_STR_CASE_LABEL;
 	    } else if ( sp->type == T_STRING ) {
 	        switch(sp->string_type) {
 	        case STRING_SHARED:
@@ -2644,28 +2644,36 @@ again:
 	pop_stack();
 	end_tab = current_prog->program + break_adr;
 	if ( i >= 14 )
-	    if ( i == 14 ) {
-		/* fastest switch format : lookup table */
-    		l = current_prog->program + offset;
-                ((char *)&d)[0] = end_tab[-4];
-                ((char *)&d)[1] = end_tab[-3];
-                ((char *)&d)[2] = end_tab[-2];
-                ((char *)&d)[3] = end_tab[-1];
-		if ( s >= d && l + (s=(s-d)*sizeof(short)) < end_tab - 4 ) {
-		    ((char *)&offset)[0] = l[s];
-		    ((char *)&offset)[1] = l[s+1];
-		    if (offset) {
+	{
+	    if ( i == 14 )
+	    {
+			/* fastest switch format : lookup table */
+				l = current_prog->program + offset;
+					((char *)&d)[0] = end_tab[-4];
+					((char *)&d)[1] = end_tab[-3];
+					((char *)&d)[2] = end_tab[-2];
+					((char *)&d)[3] = end_tab[-1];
+			if ( s >= d && l + (s=(s-d)*sizeof(short)) < end_tab - 4 )
+			{
+				((char *)&offset)[0] = l[s];
+				((char *)&offset)[1] = l[s+1];
+				if (offset)
+				{
+					pc = current_prog->program + offset;
+					break;
+				}
+			}
+			/* default */
+			((char *)&offset)[0] = pc[5];
+			((char *)&offset)[1] = pc[6];
 			pc = current_prog->program + offset;
 			break;
-		    }
-		}
-		/* default */
-		((char *)&offset)[0] = pc[5];
-		((char *)&offset)[1] = pc[6];
-		pc = current_prog->program + offset;
-		break;
-	    } else
+	    }
+	    else
+	    {
 		fatal("unsupported switch table format.\n");
+	    }
+    }
 	l = current_prog->program + offset + off_tab[i];
 	d = (off_tab[i]+6) >> 1;
 	if (d == 3) d=0;
@@ -2934,7 +2942,7 @@ again:
 	struct svalue *arg = sp - num_arg + 1;
 	int flag = 1;
 	
-	if (num_arg == 1 || sp->type == T_NUMBER && sp->u.number == 0)
+	if ((num_arg == 1) || ((sp->type == T_NUMBER) && (sp->u.number == 0)))
 	    flag = 0;
 	i = input_to(arg[0].u.string, flag);
 	pop_n_elems(num_arg);
@@ -3670,7 +3678,7 @@ again:
 #endif /* F_DEBUG_INFO */
     }
 #ifdef DEBUG
-    if (expected_stack && expected_stack != sp ||
+    if ((expected_stack && (expected_stack != sp)) ||
 	sp < fp + csp->num_local_variables - 1)
     {
 	fatal("Bad stack after evaluation. Instruction %d, num arg %d\n",
@@ -4295,7 +4303,7 @@ int last_instructions() {
     i = last;
     do {
 	if (previous_instruction[i] != 0)
-	    printf("%6x: %3d %8s %-25s (%d)\n", previous_pc[i],
+	    printf("%6p: %3d %8s %-25s (%d)\n", previous_pc[i],
 		   previous_instruction[i],
 		   get_arg(i, (i+1) %
 			   (sizeof previous_instruction / sizeof (int))),

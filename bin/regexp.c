@@ -61,6 +61,9 @@
 #include "regexp.h"
 #include "lint.h" /* for free() */
 
+typedef struct regexps regexp;
+
+
 /*
  * The "internal use only" fields in regexp.h are present to pass info from
  * compile to execute that permits the execute phase to run lots faster on

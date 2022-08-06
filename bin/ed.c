@@ -187,6 +187,9 @@ static void _count_blanks(char *str, int blanks);
 #define P_CUR_AUTOIND   (ED_BUFFER->cur_autoindent)
 #define ED_BUFFER       (command_giver->interactive->ed_buffer)
 
+typedef struct regexps regexp;
+
+
 char inlin[MAXLINE];
 char *inptr; /* tty input buffer */
 struct ed_buffer

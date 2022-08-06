@@ -10,6 +10,9 @@
 #include "regexp.h"
 #include "exec.h"
 
+typedef struct regexps regexp;
+
+
 #if defined(__GNUC__) && !defined(lint)
 #define INLINE inline
 #else
@@ -1169,7 +1172,7 @@ struct vector* intersect_array(a1, a2)
 struct vector* match_regexp(v, pattern)
 	struct vector *v;char *pattern;
 {
-	struct regexp *reg;
+	regexp *reg;
 	char *res;
 	int i, num_match;
 	struct vector *ret;

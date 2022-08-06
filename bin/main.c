@@ -11,9 +11,9 @@
 #include "config.h"
 #include "lex.h"
 
-extern char *prog;
+//extern char *prog;
 
-extern int current_line;
+//extern int current_line;
 
 int d_flag = 0;	/* Run with debug */
 int t_flag = 0;	/* Disable heart beat and reset */

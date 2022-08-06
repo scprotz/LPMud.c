@@ -17,11 +17,11 @@
 extern int d_flag;
 extern int total_num_prog_blocks, total_prog_block_size;
 
-#ifdef USE_TIOCGETP		/* Check if BSD */
-extern int getpid();
-#else
-extern pid_t getpid();
-#endif
+//#ifdef USE_TIOCGETP		/* Check if BSD */
+//extern int getpid();
+//#else
+//extern pid_t getpid();
+//#endif
 
 extern char* xalloc(int);
 

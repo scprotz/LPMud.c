@@ -44,27 +44,28 @@ extern int special_parse(char *),
 set_call(struct object *, struct sentence *, int),
 legal_path(char *);
 
-void pre_compile(char *),
-remove_interactive(struct object *),
+//void pre_compile(char *),
+void remove_interactive(struct object *),
 add_light(struct object *, int),
 add_action(char *, char *, int),
 add_verb(char *, int),
 print_local_commands(), ipc_remove(),
-show_info_about(char *, char *, struct interactive *),
-set_snoop(struct object *, struct object *),
-print_lnode_status(int),
+//show_info_about(char *, char *, struct interactive *),
+//set_snoop(struct object *, struct object *),
+//print_lnode_status(int),
 remove_all_players(), start_new_file(FILE *), end_new_file(),
 move_or_destruct(struct object *, struct object *),
-load_ob_from_swap(struct object *), dump_malloc_data(),
+load_ob_from_swap(struct object *),
+//dump_malloc_data(),
 print_svalue(struct svalue *),
-debug_message_value(),
+//debug_message_value(),
 destruct2();
 
 extern int d_flag;
 
 struct object *obj_list, *obj_list_destruct, *master_ob;
 
-extern struct wiz_list *back_bone_uid;
+//extern struct wiz_list *back_bone_uid;
 
 struct object *current_object; /* The object interpreting a function. */
 struct object *command_giver; /* Where the current command came from. */
@@ -995,13 +996,13 @@ struct vector *avoid;
 	avoid = vtmpp->item[0].u.vec;
 	if ((ob = origin->super))
 	{
-		if (ob->flags & O_ENABLE_COMMANDS || ob->interactive)
+		if ((ob->flags & O_ENABLE_COMMANDS) || ob->interactive)
 		{
 			*curr_recipient++ = ob;
 		}
 		for (ob = origin->super->contains; ob; ob = ob->next_inv)
 		{
-			if (ob->flags & O_ENABLE_COMMANDS || ob->interactive)
+			if ((ob->flags & O_ENABLE_COMMANDS) || ob->interactive)
 			{
 				if (curr_recipient >= last_recipients)
 				{
@@ -1020,7 +1021,7 @@ struct vector *avoid;
 	}
 	for (ob = origin->contains; ob; ob = ob->next_inv)
 	{
-		if (ob->flags & O_ENABLE_COMMANDS || ob->interactive)
+		if ((ob->flags & O_ENABLE_COMMANDS) || ob->interactive)
 		{
 			if (curr_recipient >= last_recipients)
 			{
@@ -1241,7 +1242,7 @@ int flag;
 {
 	struct sentence *s;
 
-	if (!command_giver || command_giver->flags & O_DESTRUCTED)
+	if (!command_giver || (command_giver->flags & O_DESTRUCTED))
 	return 0;
 	s = alloc_sentence();
 	if (set_call(command_giver, s, flag))
@@ -1612,7 +1613,7 @@ struct object* find_object(char *str)
 	ob = load_object(str, 0);
 	if (ob->flags & O_DESTRUCTED) /* *sigh* */
 		return 0;
-	if (ob && ob->flags & O_SWAPPED)
+	if (ob && (ob->flags & O_SWAPPED))
 		load_ob_from_swap(ob);
 	return ob;
 }
@@ -1705,7 +1706,7 @@ void move_object(item, dest)
 			command_giver = item;
 			push_object(item);
 			(void) apply("exit", item->super, 1);
-			if (item->flags & O_DESTRUCTED || dest->flags & O_DESTRUCTED)
+			if ((item->flags & O_DESTRUCTED) || (dest->flags & O_DESTRUCTED))
 				return; /* Give up */
 #endif
 			remove_sent(item->super, item);
@@ -2776,7 +2777,7 @@ int match_string(match, str)
 			match++;
 			if (*match == '\0')
 				return 0;
-			/* Fall through ! */
+			// no break //
 		default:
 			if (*match == *str)
 			{

@@ -654,7 +654,7 @@ while non existed.
 
 A new file, func_desc, has been created that defines number of arguments,
 return types and types of arguments for all efuns. A program, make_func, will
-automatically generate a file efun_defs.c that is included into lex.c.
+automatically generate a file efun_defs.h that is included into lex.c.
 The base for compile time type checking is also done this way.
 
 JnA: get_log_file() added to get the filename of where to log errors for a 

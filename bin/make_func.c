@@ -1799,6 +1799,7 @@ int main(int argc, char **argv)
            }
     }
     /* Now display it... */
+    printf("struct keyword predefs[] = ");
     printf("{\n");
     for (i = 0; i < num_buff; i++)
        printf("%s", buf[i]);

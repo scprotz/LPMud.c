@@ -118,7 +118,7 @@ int version = 5; /* used only in the "set" function, for i.d. */
 
 /**  Global variables  **/
 
-extern struct program *current_prog;
+//extern struct program *current_prog;
 
 struct line
 {
@@ -197,10 +197,10 @@ struct ed_buffer
 	int nullchar; /* count of null chars read */
 	int truncated; /* count of lines truncated */
 	char fname[MAXFNAME];
-	int fchanged; /* file-changed? flag */
+	int fchanged; /* file-changed? flag  */
 	int nofname;
 	int mark['z' - 'a' + 1];
-	regexp *oldpat;
+	regexp* oldpat;
 
 	LINE Line0;
 	int CurLn;
@@ -1036,6 +1036,7 @@ int getrhs(sub)
 				case '9':
 				case '\\':
 					*sub++ = ESCAPE; /* fall through */
+					// no break //
 				default:
 #endif
 					*sub++ = *inptr;
@@ -1614,7 +1615,7 @@ static int strip_buff(line, buff2)
 						flagnotif = 0;
 						indent[indent_level + 1] = i + 3;
 					}
-				/*drop through*/
+				// no break //
 			default:
 				if (flagnotif)
 				{
@@ -1711,7 +1712,7 @@ int docmd(glob)
 				return (ERR);
 			if (P_FCHANGED)
 				return CHANGED;
-			/*FALL THROUGH*/
+			// no break //
 		case 'E':
 			if (P_NLINES > 0)
 				return (ERR);
@@ -1840,7 +1841,7 @@ int docmd(glob)
 		case 'q':
 			if (P_FCHANGED)
 				return CHANGED;
-			/*FALL THROUGH*/
+			// no break //
 		case 'Q':
 			clrbuf();
 			if (*inptr == NL && P_NLINES == 0 && !glob)
@@ -2417,8 +2418,8 @@ typing ^D or ^K in the autoindent mode.\n");
 				break;
 			}
 			else
-				;
-			/* is there anyone who wants to add an exact description for the 's' command? */
+			{}
+			// no break //
 		case 'w':
 		case 'W':
 		case '/':

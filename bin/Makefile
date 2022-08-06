@@ -183,14 +183,14 @@ parse.o: interpret.h config.h object.h wiz_list.h
 
 stralloc.o: config.h
 
-lex.o: config.h instrs.h interpret.h exec.h efun_defs.c lang.h lex.h
+lex.o: config.h instrs.h interpret.h exec.h efun_defs.h lang.h lex.h
 
 array.o: interpret.h object.h config.h wiz_list.h regexp.h exec.h
 
 access_check.o: config.h
 
-lang.y efun_defs.c: func_spec.c make_func prelang.y postlang.y config.h
+lang.y efun_defs.h: func_spec.c make_func prelang.y postlang.y config.h
 	@$(CC) -E $(CFLAGS) func_spec.c > list_funcs.txt 
-	./make_func > efun_defs.c
+	./make_func > efun_defs.h
 
 simul_efun.o: interpret.h object.h exec.h

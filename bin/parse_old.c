@@ -28,8 +28,8 @@
 #define LVALUE struct svalue
 
 extern char* string_copy(const char*),* xalloc(int);
-extern int o_flag, d_flag; /* for debugging purposes */
-extern struct svalue const0, const1;
+//extern int o_flag, d_flag; /* for debugging purposes */
+//extern struct svalue const0, const1;
 
 #ifndef tolower			/* On some systems this is a function */
 extern int tolower(int);
@@ -1252,7 +1252,7 @@ int parse(cs, ob_or_array, ps, dest_args, num_arg)
 
 			case ALT: /* / */
 				altflag = 1; /* Should not be found here, if so skip it */
-
+				// no break //
 			case W1: /* %w */
 				gTxarg = gCarg;
 				strcpy(tx_jp, "");

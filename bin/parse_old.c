@@ -27,12 +27,12 @@
 #define SVALUE struct svalue
 #define LVALUE struct svalue
 
-extern char *string_copy PROT((char *)), *xalloc PROT((int));
+extern char *string_copy(char *), *xalloc(int);
 extern int o_flag, d_flag; /* for debugging purposes */
 extern SVALUE const0, const1;
 
 #ifndef tolower			/* On some systems this is a function */
-extern int tolower PROT((int));
+extern int tolower(int);
 #endif
 
 #ifdef COMPAT_MODE

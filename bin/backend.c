@@ -25,7 +25,7 @@ int error_recovery_context_exists = 0;
  */
 int current_time;
 
-static void cycle_hb_list PROT((void));
+static void cycle_hb_list(void);
 extern struct object *command_giver, *current_interactive, *obj_list_destruct;
 extern int num_player, d_flag;
 extern struct object *previous_ob, *master_ob;
@@ -34,13 +34,13 @@ struct object *current_heart_beat;
 
 void call_heart_beat(), catch_alarm();
 void load_first_objects(), prepare_ipc(),
-    shutdowngame(), ed_cmd PROT((char *)),
+    shutdowngame(), ed_cmd(char *),
     print_prompt(), call_out(),
-    destruct2 PROT((struct object *));
+    destruct2(struct object *);
 
-extern int get_message PROT((char *, int)), player_parser PROT((char *)),
-    call_function_interactive PROT((struct interactive *, char *)),
-    resort_free_list(), swap PROT((struct object *));
+extern int get_message(char *, int), player_parser(char *),
+    call_function_interactive(struct interactive *, char *),
+    resort_free_list(), swap(struct object *);
 
 extern void flush_all_player_mess();
 
@@ -147,7 +147,7 @@ void backend()
 	    slow_shut_down(tmp);
 	}
 	if (get_message(buff, sizeof buff)) {
-	    void update_load_av PROT((void));
+	    void update_load_av(void);
 
 	    update_load_av();
 	    /*

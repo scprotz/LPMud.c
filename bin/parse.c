@@ -19,12 +19,12 @@
 #include "object.h"
 #include "wiz_list.h"
 
-extern char *string_copy PROT((char *)), *xalloc PROT((int));
+extern char *string_copy(char *), *xalloc(int);
 extern int d_flag; /* for debugging purposes */
 extern struct object *previous_ob;
 
 #ifndef tolower			/* On some systems this is a function */
-extern int tolower PROT((int));
+extern int tolower(int);
 #endif
 
 #ifndef COMPAT_MODE

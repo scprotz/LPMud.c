@@ -133,20 +133,20 @@ struct	line {
 typedef struct line	LINE;
 
 extern struct object *command_giver;
-void set_prompt PROT((char *));
+void set_prompt(char *);
 
 #ifndef toupper
-extern int toupper PROT((int));
+extern int toupper(int);
 #endif
 
-int doprnt PROT((int, int));
-int ins PROT((char *));
-int deflt PROT((int, int));
-static int strip_buff PROT((int line,char *buff2));
-static void print_help PROT((int arg));
-static void print_help2 PROT((void));
-static void count_blanks PROT((int line));
-static void _count_blanks PROT((char *str, int blanks));
+int doprnt(int, int);
+int ins(char *);
+int deflt(int, int);
+static int strip_buff(int line,char *buff2);
+static void print_help(int arg);
+static void print_help2(void);
+static void count_blanks(int line);
+static void _count_blanks(char *str, int blanks);
 
 #define P_DIAG		(command_giver->interactive->ed_buffer->diag)
 #define P_TRUNCFLG	(command_giver->interactive->ed_buffer->truncflg)

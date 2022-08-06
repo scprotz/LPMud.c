@@ -23,9 +23,9 @@ extern int getpid();
 extern pid_t getpid();
 #endif
 
-extern char *xalloc PROT((int)), *string_copy PROT((char *));
+extern char *xalloc(int), *string_copy(char *);
 
-void remove_swap_file PROT((struct object *));
+void remove_swap_file(struct object *);
 
 extern int atoi();
 

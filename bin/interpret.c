@@ -32,7 +32,7 @@
 
 #ifdef RUSAGE			/* Defined in config.h */
 #include <sys/resource.h>
-extern int getrusage PROT((int, struct rusage *));
+extern int getrusage(int, struct rusage *);
 #ifdef sun
 extern int getpagesize();
 #endif
@@ -49,13 +49,13 @@ extern int getpagesize();
 
 extern struct object *master_ob;
 
-extern void print_svalue PROT((struct svalue *));
-static struct svalue *sapply PROT((char *, struct object *, int));
-static void do_trace PROT((char *, char *, char *));
-static int apply_low PROT((char *, struct object *, int));
-static int inter_sscanf PROT((int));
-static int strpref PROT((char *, char *));
-extern int do_rename PROT((char *, char *));     
+extern void print_svalue(struct svalue *);
+static struct svalue *sapply(char *, struct object *, int);
+static void do_trace(char *, char *, char *);
+static int apply_low(char *, struct object *, int);
+static int inter_sscanf(int);
+static int strpref(char *, char *);
+extern int do_rename(char *, char *);
 
 extern struct object *previous_ob;
 extern char *last_verb;
@@ -1516,8 +1516,8 @@ again:
     CASE(F_QUERY_IP_NUMBER);
     CASE(F_QUERY_IP_NAME);
     {
-	extern char *query_ip_number PROT((struct object *));
- 	extern char *query_ip_name PROT((struct object *));
+	extern char *query_ip_number(struct object *);
+ 	extern char *query_ip_name(struct object *);
 	char *tmp;
 
 	if (num_arg == 1 && sp->type != T_OBJECT)
@@ -1748,7 +1748,7 @@ again:
     CASE(F_SUBTRACT);
 	if ((sp-1)->type == T_POINTER && sp->type == T_POINTER) {
 	    extern struct vector *subtract_array
-	      PROT((struct vector *,struct vector*));
+	     (struct vector *,struct vector*);
 	    struct vector *v;
 
 	    v = sp->u.vec;
@@ -1774,7 +1774,7 @@ again:
     CASE(F_AND);
 	if (sp->type == T_POINTER && (sp-1)->type == T_POINTER) {
 	    extern struct vector *intersect_array
-	      PROT((struct vector *, struct vector *));
+	     (struct vector *, struct vector *);
 	    (sp-1)->u.vec = intersect_array(sp->u.vec, (sp-1)->u.vec);
 	    sp--;
 	    break;
@@ -2259,7 +2259,7 @@ again:
     CASE(F_INHERIT_LIST)
     {
 	struct vector *vec;
-	extern struct vector *inherit_list PROT((struct object *));
+	extern struct vector *inherit_list(struct object *);
 
 	vec = inherit_list(sp->u.ob);
 	pop_stack();
@@ -2565,7 +2565,7 @@ again:
 	    avoid = &null_vector;
 	    avoid->ref++;
 	} else {
-	    extern struct vector *order_alist PROT((struct vector *));
+	    extern struct vector *order_alist(struct vector *);
 	    struct vector *vtmpp;
 	    static struct vector vtmp = { 1, 1,
 #ifdef DEBUG
@@ -2608,7 +2608,7 @@ again:
 	fatal("F_FOR should not appear.\n");
     CASE(F_SWITCH);
     {
-	extern char* findstring PROT((char*));
+	extern char* findstring(char*);
 	unsigned short offset,break_adr;
 	int d,s,r;
 	char *l,*end_tab;
@@ -2837,7 +2837,7 @@ again:
     CASE(F_PROCESS_STRING);
     {
 	extern char
-	    *process_string PROT((char *));
+	    *process_string(char *);
 
 	char *str;
 
@@ -3108,7 +3108,7 @@ again:
             break;
 	case T_POINTER:
 	  {
-	    struct vector *subtract_array PROT((struct vector*,struct vector*));
+	    struct vector *subtract_array(struct vector*,struct vector*);
 	    struct vector *v;
 
 	    if (sp->type != T_POINTER)
@@ -3327,8 +3327,8 @@ again:
     }
     CASE(F_UNIQUE_ARRAY); {
 	extern struct vector
-	    *make_unique PROT((struct vector *arr,char *func,
-	    struct svalue *skipnum));
+	    *make_unique (struct vector *arr,char *func,
+	    struct svalue *skipnum);
 	struct vector *res;
 
 	if (num_arg < 3) {
@@ -3392,7 +3392,7 @@ again:
     }
     CASE(F_SORT_ARRAY); {
 	extern struct vector *sort_array
-	  PROT((struct vector*,char *,struct object *));
+	 (struct vector*,char *,struct object *);
 	struct vector *res;
 	struct svalue *arg;
 
@@ -3425,7 +3425,7 @@ again:
 #ifdef F_ORDER_ALIST
     CASE(F_ORDER_ALIST);
     {
-	extern struct vector *order_alist PROT((struct vector *));
+	extern struct vector *order_alist(struct vector *);
 	struct svalue *args;
 	struct vector *list;
 	int listsize,keynum;
@@ -3465,8 +3465,8 @@ again:
 	   order_alist to retain the alist property.
 	 */
 	extern struct svalue *insert_alist
-	  PROT((struct svalue *key,struct svalue *key_data,
-	    struct vector *list));
+	  (struct svalue *key,struct svalue *key_data,
+	    struct vector *list);
 	struct vector *list;
 	int listsize,keynum;
 	struct svalue *key,*key_data,*ret;
@@ -3515,7 +3515,7 @@ again:
 	   it is better not to free them till the next reordering by
 	   order_alist to retain the alist property.
 	 */
-	int assoc PROT((struct svalue *key, struct vector *keys));
+	int assoc(struct svalue *key, struct vector *keys);
 	struct svalue *args = sp -num_arg +1;
 	struct vector *keys,*data;
 	struct svalue *fail_val;
@@ -3570,7 +3570,7 @@ again:
     CASE(F_INTERSECT_ALIST);
     {
 	extern struct vector *intersect_alist
-	  PROT((struct vector *, struct vector *));
+	 (struct vector *, struct vector *);
 	struct vector *tmp = intersect_alist( (sp-1)->u.vec, sp->u.vec );
 	pop_stack();
 	free_vector(sp->u.vec);
@@ -4036,7 +4036,7 @@ char *dump_trace(how)
     struct control_stack *p;
     char *ret = 0;
 #ifdef DEBUG
-    int last_instructions PROT((void));
+    int last_instructions(void);
 #endif
 
     if (current_prog == 0)

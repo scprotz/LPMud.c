@@ -30,33 +30,33 @@ extern int comp_flag;
 
 char *inherit_file;
 
-extern int readlink PROT((char *, char *, int));
-extern int symlink PROT((char *, char *));
+extern int readlink(char *, char *, int);
+extern int symlink(char *, char *);
 //#ifndef MSDOS
-//extern int lstat PROT((char *, struct stat *));
+//extern int lstat(char *, struct stat *);
 //#else
 //#define lstat stat
 //#endif
-//extern int fchmod PROT((int, int));
+//extern int fchmod(int, int);
 char *last_verb;
 
-extern int special_parse PROT((char *)),
-    set_call PROT((struct object *, struct sentence *, int)),
-    legal_path PROT((char *));
+extern int special_parse(char *),
+    set_call(struct object *, struct sentence *, int),
+    legal_path(char *);
 
-void pre_compile PROT((char *)),
-    remove_interactive PROT((struct object *)),
-    add_light PROT((struct object *, int)),
-    add_action PROT((char *, char *, int)),
-    add_verb PROT((char *, int)),
+void pre_compile(char *),
+    remove_interactive(struct object *),
+    add_light(struct object *, int),
+    add_action(char *, char *, int),
+    add_verb(char *, int),
     print_local_commands(), ipc_remove(),
-    show_info_about PROT((char *, char *, struct interactive *)),
-    set_snoop PROT((struct object *, struct object *)),
-    print_lnode_status PROT((int)),
-    remove_all_players(), start_new_file PROT((FILE *)), end_new_file(),
-    move_or_destruct PROT((struct object *, struct object *)),
-    load_ob_from_swap PROT((struct object *)), dump_malloc_data(),
-    print_svalue PROT((struct svalue *)),
+    show_info_about(char *, char *, struct interactive *),
+    set_snoop(struct object *, struct object *),
+    print_lnode_status(int),
+    remove_all_players(), start_new_file(FILE *), end_new_file(),
+    move_or_destruct(struct object *, struct object *),
+    load_ob_from_swap(struct object *), dump_malloc_data(),
+    print_svalue(struct svalue *),
     debug_message_value(),
     destruct2();
 
@@ -467,7 +467,7 @@ int command_for_object(str, ob)
  * inventory of 'ob'. The argument 'ob' will be mandatory, later.
  */
 
-static struct object *object_present2 PROT((char *, struct object *));
+static struct object *object_present2(char *, struct object *);
 
 struct object *object_present(v, ob)
     struct svalue *v;
@@ -887,7 +887,7 @@ void say(v, avoid)
     struct svalue *v;
     struct vector *avoid;
 {
-    extern struct vector *order_alist PROT((struct vector *));
+    extern struct vector *order_alist(struct vector *);
     struct vector *vtmpp;
     static struct vector vtmp = { 1, 1,
 #ifdef DEBUG
@@ -897,7 +897,7 @@ void say(v, avoid)
 	{ { T_POINTER } }
 	};
 
-    extern int assoc PROT((struct svalue *key, struct vector *));
+    extern int assoc(struct svalue *key, struct vector *);
     struct object *ob, *save_command_giver = command_giver;
     struct object *origin;
     char buff[256];
@@ -977,7 +977,7 @@ void say(v, avoid)
 	break;
     case T_POINTER:
 	for (curr_recipient = recipients; ob = *curr_recipient++; ) {
-	    extern void push_vector PROT((struct vector *));
+	    extern void push_vector(struct vector *);
 
 	    if (ob->flags & O_DESTRUCTED) continue;
 	    stmp.u.ob = ob;
@@ -1037,7 +1037,7 @@ void tell_room(room, v, avoid)
 	error("Invalid argument %d to tell_room()\n", v->type);
     }
     for (ob = room->contains; ob; ob = ob->next_inv) {
-        int assoc PROT((struct svalue *key, struct vector *));
+        int assoc(struct svalue *key, struct vector *);
 	static struct svalue stmp = { T_OBJECT, } ;
 
 	stmp.u.ob = ob;

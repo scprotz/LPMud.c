@@ -9,5 +9,5 @@ struct sentence {
 
 struct sentence *alloc_sentence();
 
-void remove_sent PROT((struct object *, struct object *)),
-    free_sentence PROT((struct sentence *));
+void remove_sent(struct object *, struct object *),
+    free_sentence(struct sentence *);

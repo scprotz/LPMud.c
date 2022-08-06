@@ -43,7 +43,7 @@ struct vector {
 			    sizeof(struct svalue) * (nelem - 1))
 
 struct lnode_def;
-void free_vector PROT((struct vector *)), free_all_values();
+void free_vector(struct vector *), free_all_values();
 
 /*
  * Control stack element.

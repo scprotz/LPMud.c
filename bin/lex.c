@@ -28,15 +28,15 @@ int pragma_save_types;		/* Save argument types after compilation */
 struct lpc_predef_s *lpc_predefs=NULL;
 extern char *argument_name;
 extern char *xalloc();
-static int number PROT((int)), ident PROT((char *)), string PROT((char *));
-static int islocal PROT((char *));
-static void handle_define PROT((char *));
-static void free_defines PROT((void)), add_define PROT((char *, int, char *));
-static int expand_define PROT((void));
-static void add_input PROT((char *));
-static void myungetc PROT((int));
-static int lookup_resword PROT((char *));
-static int cond_get_exp PROT((int));
+static int number(int), ident(char *), string(char *);
+static int islocal(char *);
+static void handle_define(char *);
+static void free_defines(void), add_define(char *, int, char *);
+static int expand_define(void);
+static void add_input(char *);
+static void myungetc(int);
+static int lookup_resword(char *);
+static int cond_get_exp(int);
 static int exgetc();
 static FILE *yyin;
 static int lex_fatal;
@@ -52,7 +52,7 @@ extern int current_number_of_locals;
 extern char *string_copy();
 
 #ifndef tolower
-extern int tolower PROT((int));
+extern int tolower(int);
 #endif
 
 void yyerror(), error(), free();

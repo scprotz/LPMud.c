@@ -10,7 +10,7 @@
  * Maintain the wizards high score list about most popular castle.
  */
 
-extern char *string_copy PROT((char *)), *xalloc PROT((int));
+extern char *string_copy(char *), *xalloc(int);
 
 struct wiz_list *all_wiz;
 

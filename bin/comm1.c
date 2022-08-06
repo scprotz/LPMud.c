@@ -33,32 +33,32 @@
 #include "msdos/pcomm.h"
 #endif
 
-int socket PROT((int, int, int));
+int socket(int, int, int);
 #ifndef sgi
 //#ifdef NeXT
-//int setsockopt PROT((int, int, int, void *, int));
+//int setsockopt(int, int, int, void *, int);
 //#else
-//int setsockopt PROT((int, int, int, char *, int));
+//int setsockopt(int, int, int, char *, int);
 //#endif
-//int bind PROT((int, struct sockaddr *, int));
-int listen PROT((int, int));
-//int accept PROT((int, struct sockaddr *, int *));
+//int bind(int, struct sockaddr *, int);
+int listen(int, int);
+//int accept(int, struct sockaddr *, int *);
 #endif /* sgi */
-int select PROT((int, fd_set *, fd_set *, fd_set *, struct timeval *));
+int select(int, fd_set *, fd_set *, fd_set *, struct timeval *);
 
-//void bzero PROT((char *, int));
-void telnet_neg PROT((char *, char *));
-void set_prompt PROT((char *));
-char *query_ip_number PROT((struct object *));
-static void add_ip_entry PROT((long, char *));
+//void bzero(char *, int);
+void telnet_neg(char *, char *);
+void set_prompt(char *);
+char *query_ip_number(struct object *);
+static void add_ip_entry(long, char *);
 
 extern char *xalloc(), *string_copy(), *unshared_str_copy();
 extern int d_flag;
 extern int current_time;
-char * first_cmd_in_buf PROT((struct interactive *));
-void next_cmd_in_buf PROT((struct interactive *));
-char * skip_eols PROT((struct interactive *, char *));
-void remove_flush_entry PROT((struct interactive *ip));
+char * first_cmd_in_buf(struct interactive *);
+void next_cmd_in_buf(struct interactive *);
+char * skip_eols(struct interactive *, char *);
+void remove_flush_entry(struct interactive *ip);
 
 void remove_interactive(), add_ref();
 

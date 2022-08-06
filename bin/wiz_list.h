@@ -16,6 +16,6 @@ struct wiz_list {
     int line_number;
 };
 
-extern struct wiz_list *add_name PROT((char *));
+extern struct wiz_list *add_name(char *);
 struct value;
 extern void save_wiz_file(), load_wiz_file(), wiz_decay();

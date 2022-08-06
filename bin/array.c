@@ -484,7 +484,7 @@ struct vector *add_array(p,r)
 struct vector *subtract_array(minuend, subtrahend)
     struct vector *minuend, *subtrahend;
 {
-    struct vector *order_alist PROT((struct vector *));
+    struct vector *order_alist(struct vector *);
     struct vector *vtmpp;
     static struct vector vtmp = { 1, 1,
 #ifdef DEBUG
@@ -506,7 +506,7 @@ struct vector *subtract_array(minuend, subtrahend)
       i--; source++) {
         extern struct svalue const0;
 
-        int assoc PROT((struct svalue *key, struct vector *));
+        int assoc(struct svalue *key, struct vector *);
 	if (source->type == T_OBJECT && source->u.ob->flags & O_DESTRUCTED)
 	    assign_svalue(source, &const0);
 	if ( assoc(source, subtrahend) < 0 )
@@ -984,7 +984,7 @@ int assoc(key, list)
     struct vector *list;
 {
     int i;
-    extern char* findstring PROT((char*));
+    extern char* findstring(char*);
 
     if (key->type == T_STRING && key->string_type != STRING_SHARED) {
         static struct svalue stmp = { T_STRING, STRING_SHARED };
@@ -1051,7 +1051,7 @@ struct vector *symmetric_difference_alist(a1, a2)
 struct vector *intersect_array(a1, a2)
     struct vector *a1,*a2;
 {
-    struct vector *order_alist PROT((struct vector *));
+    struct vector *order_alist(struct vector *);
     struct vector *vtmpp1,*vtmpp2,*vtmpp3;
     static struct vector vtmp = { 1, 1,
 #ifdef DEBUG

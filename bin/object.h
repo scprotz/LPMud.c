@@ -47,22 +47,22 @@ struct object {
     /* The variables MUST come last in the struct */
 };
 
-extern struct object *load_object PROT((char *, int)),
-        *find_object PROT((char *));
-extern struct object *get_empty_object(), *find_object PROT((char *)),
-	*find_object2 PROT((char *));
+extern struct object *load_object(char *, int),
+        *find_object(char *);
+extern struct object *get_empty_object(), *find_object(char *),
+	*find_object2(char *);
 extern struct object *current_object, *command_giver;
 
 extern struct object *obj_list;
 extern struct object *obj_list_destruct;
 
 struct value;
-void remove_destructed_objects(), save_object PROT((struct object *, char *)),
-    move_object PROT((struct object *, struct object *)),
-    tell_object PROT((struct object *, char *)),
-    tell_npc PROT((struct object *, char *)),
-    add_ref PROT((struct object *, char *)),
-    free_object PROT((struct object *, char *)),
-    reference_prog PROT((struct program *, char *));
+void remove_destructed_objects(), save_object(struct object *, char *),
+    move_object(struct object *, struct object *),
+    tell_object(struct object *, char *),
+    tell_npc(struct object *, char *),
+    add_ref(struct object *, char *),
+    free_object(struct object *, char *),
+    reference_prog(struct program *, char *);
 
-int restore_object PROT((struct object *, char *));
+int restore_object(struct object *, char *);

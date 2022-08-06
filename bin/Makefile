@@ -102,6 +102,11 @@ install.utils:
 
 utils:	
 	(cd util; $(MAKE) $(MFLAGS))
+	cd ..
+	
+utils_clean:
+	(cd util; $(MAKE) $(MFLAGS) clean)
+	cd ..
 
 parse: driver
 	-mv parse parse.old

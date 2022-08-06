@@ -195,16 +195,16 @@ static int first_last_initializer_end;
 static struct program NULL_program; /* marion - clean neat empty struct */
 
 void epilog();
-static int check_declared PROT((char *str));
+static int check_declared(char *str);
 static void prolog();
-static char *get_two_types PROT((int type1, int type2));
+static char *get_two_types(int type1, int type2);
 void free_all_local_names(),
-    add_local_name PROT((char *, int)), smart_log PROT((char *, int, char *));
+    add_local_name(char *, int), smart_log(char *, int, char *);
 extern int yylex();
-static int verify_declared PROT((char *));
+static int verify_declared(char *);
 static void copy_variables();
-static int copy_functions PROT((struct program *, int type));
-void type_error PROT((char *, int));
+static int copy_functions(struct program *, int type);
+void type_error(char *, int);
 
 char *xalloc(), *string_copy();
 

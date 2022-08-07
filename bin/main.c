@@ -26,7 +26,7 @@ extern int yydebug;
 #endif
 
 int port_number = PORTNO;
-char *reserved_area; /* reserved for malloc() */
+char* reserved_area; /* reserved for malloc() */
 struct svalue const0, const1;
 
 double consts[5];
@@ -34,9 +34,9 @@ double consts[5];
 extern jmp_buf error_recovery_context;
 extern int error_recovery_context_exists;
 
-extern struct object *master_ob;
+extern struct object* master_ob;
 
-struct wiz_list *back_bone_uid;
+struct wiz_list* back_bone_uid;
 
 static void start_ip_demon();
 
@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 	extern int current_time;
 	int i, new_mudlib = 0;
 	int no_ip_demon = 0;
-	char *p;
+	char* p;
 #ifndef COMPAT_MODE
     struct svalue *ret;
 #endif
@@ -105,7 +105,7 @@ int main(int argc, char **argv)
 				if (argv[i][2])
 				{ /* Amylaar : allow flags to be passed down to
 				 the LPC preprocessor */
-					struct lpc_predef_s *tmp;
+					struct lpc_predef_s* tmp;
 
 					tmp = (struct lpc_predef_s*) alloca(
 							sizeof(struct lpc_predef_s));
@@ -263,7 +263,7 @@ int main(int argc, char **argv)
 
 char* string_copy(const char *str)
 {
-	char *p;
+	char* p;
 
 	p = xalloc(strlen(str) + 1);
 	(void) strcpy(p, str);
@@ -272,9 +272,9 @@ char* string_copy(const char *str)
 
 /*VARARGS1*/
 void debug_message(a, b, c, d, e, f, g, h, i, j)
-	char *a;int b, c, d, e, f, g, h, i, j;
+	char* a;int b, c, d, e, f, g, h, i, j;
 {
-	static FILE *fp = NULL;
+	static FILE* fp = NULL;
 	char deb[111];
 	char name[100];
 
@@ -298,7 +298,7 @@ void debug_message(a, b, c, d, e, f, g, h, i, j)
 }
 
 void debug_message_svalue(v)
-	struct svalue *v;
+	struct svalue* v;
 {
 	if (v == 0)
 	{
@@ -335,7 +335,7 @@ int slow_shut_down_to_do = 0;
 char* xalloc(size)
 	int size;
 {
-	char *p;
+	char* p;
 	static int going_to_exit;
 
 	if (going_to_exit)
@@ -366,7 +366,7 @@ char* xalloc(size)
 #ifndef NO_IP_DEMON
 static void start_ip_demon()
 {
-	extern FILE *f_ip_demon, *f_ip_demon_wr;
+	extern FILE* f_ip_demon, * f_ip_demon_wr;
 	char path[100];
 	int tochild[2], fromchild[2];
 	int pid;

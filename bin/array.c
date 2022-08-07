@@ -12,7 +12,6 @@
 
 typedef struct regexps regexp;
 
-
 #if defined(__GNUC__) && !defined(lint)
 #define INLINE inline
 #else
@@ -47,7 +46,7 @@ struct vector* allocate_array(n)
 {
 	extern struct svalue const0;
 	int i;
-	struct vector *p;
+	struct vector* p;
 
 	if (n < 0 || n > MAX_ARRAY_SIZE)
 		error("Illegal array size.\n");
@@ -71,7 +70,7 @@ struct vector* allocate_array(n)
 }
 
 void free_vector(p)
-	struct vector *p;
+	struct vector* p;
 {
 	int i;
 	p->ref--;
@@ -92,11 +91,11 @@ void free_vector(p)
 }
 
 struct vector* shrink_array(p, n)
-	struct vector *p;int n;
+	struct vector* p;int n;
 {
 	if (n <= p->size >> 1)
 	{
-		struct vector *res;
+		struct vector* res;
 
 		res = slice_array(p, 0, n - 1);
 		free_vector(p);
@@ -110,12 +109,12 @@ struct vector* shrink_array(p, n)
 }
 
 struct vector* explode_string(str, del)
-	char *str, *del;
+	char* str, * del;
 {
-	char *p, *beg;
+	char* p, * beg;
 	int num, len;
-	struct vector *ret;
-	char *buff;
+	struct vector* ret;
+	char* buff;
 
 	len = strlen(del);
 	/*
@@ -195,10 +194,10 @@ struct vector* explode_string(str, del)
 }
 
 char* implode_string(arr, del)
-	struct vector *arr;char *del;
+	struct vector* arr;char* del;
 {
 	int size, i, num;
-	char *p, *q;
+	char* p, * q;
 
 	for (i = 0, size = 0, num = 0; i < arr->size; i++)
 	{
@@ -232,10 +231,10 @@ char* implode_string(arr, del)
 
 struct vector* users()
 {
-	struct object *ob;
+	struct object* ob;
 	extern int num_player; /* set by comm1.c */
 	int i;
-	struct vector *ret;
+	struct vector* ret;
 
 	ret = allocate_array(num_player);
 	for (i = 0; i < num_player; i++)
@@ -269,9 +268,9 @@ struct vector* users()
  * Slice of an array.
  */
 struct vector* slice_array(p, from, to)
-	struct vector *p;int from;int to;
+	struct vector* p;int from;int to;
 {
-	struct vector *d;
+	struct vector* d;
 	int cnt;
 
 	if (from < 0)
@@ -297,11 +296,11 @@ struct vector* slice_array(p, from, to)
  returned 1 for.
  */
 struct vector* filter(p, func, ob, extra)
-	struct vector *p;char *func;struct object *ob;struct svalue *extra;
+	struct vector* p;char* func;struct object* ob;struct svalue* extra;
 {
-	struct vector *r;
-	struct svalue *v;
-	char *flags;
+	struct vector* r;
+	struct svalue* v;
+	char* flags;
 	int cnt, res;
 
 	res = 0;
@@ -376,14 +375,14 @@ struct vector* filter(p, func, ob, extra)
 struct unique
 {
 	int count;
-	struct svalue *val;
+	struct svalue* val;
 	struct svalue mark;
-	struct unique *same;
-	struct unique *next;
+	struct unique* same;
+	struct unique* next;
 };
 
 static int sameval(arg1, arg2)
-	struct svalue *arg1;struct svalue *arg2;
+	struct svalue* arg1;struct svalue* arg2;
 {
 	if (!arg1 || !arg2)
 		return 0;
@@ -408,9 +407,9 @@ static int sameval(arg1, arg2)
 }
 
 static int put_in(ulist, marker, elem)
-	struct unique **ulist;struct svalue *marker;struct svalue *elem;
+	struct unique** ulist;struct svalue* marker;struct svalue* elem;
 {
-	struct unique *llink, *slink, *tlink;
+	struct unique* llink, * slink, * tlink;
 	int cnt, fixed;
 
 	llink = *ulist;
@@ -448,11 +447,11 @@ static int put_in(ulist, marker, elem)
 }
 
 struct vector* make_unique(arr, func, skipnum)
-	struct vector *arr;char *func;struct svalue *skipnum;
+	struct vector* arr;char* func;struct svalue* skipnum;
 {
-	struct svalue *v;
-	struct vector *res, *ret;
-	struct unique *head, *nxt, *nxt2;
+	struct svalue* v;
+	struct vector* res, * ret;
+	struct unique* head, * nxt, * nxt2;
 
 	int cnt, ant, cnt2;
 
@@ -502,10 +501,10 @@ struct vector* make_unique(arr, func, skipnum)
 /* Concatenation of two arrays into one
  */
 struct vector* add_array(p, r)
-	struct vector *p, *r;
+	struct vector* p, * r;
 {
 	int cnt, res;
-	struct vector *d;
+	struct vector* d;
 
 	d = allocate_array(p->size + r->size);
 	res = 0;
@@ -523,10 +522,10 @@ struct vector* add_array(p, r)
 }
 
 struct vector* subtract_array(minuend, subtrahend)
-	struct vector *minuend, *subtrahend;
+	struct vector* minuend, * subtrahend;
 {
 	struct vector* order_alist(struct vector*);
-	struct vector *vtmpp;
+	struct vector* vtmpp;
 	static struct vector vtmp =
 	{ 1, 1,
 #ifdef DEBUG
@@ -535,8 +534,8 @@ struct vector* subtract_array(minuend, subtrahend)
 			0,
 			{
 			{ T_POINTER } } };
-	struct vector *difference;
-	struct svalue *source, *dest;
+	struct vector* difference;
+	struct svalue* source, * dest;
 	int i;
 
 	vtmp.item[0].u.vec = subtrahend;
@@ -562,10 +561,10 @@ struct vector* subtract_array(minuend, subtrahend)
 /* Returns an array of all objects contained in 'ob'
  */
 struct vector* all_inventory(ob)
-	struct object *ob;
+	struct object* ob;
 {
-	struct vector *d;
-	struct object *cur;
+	struct vector* d;
+	struct object* cur;
 	int cnt, res;
 
 	cnt = 0;
@@ -592,10 +591,10 @@ struct vector* all_inventory(ob)
  and replaces each value in arr by the value returned by ob::func
  */
 struct vector* map_array(arr, func, ob, extra)
-	struct vector *arr;char *func;struct object *ob;struct svalue *extra;
+	struct vector* arr;char* func;struct object* ob;struct svalue* extra;
 {
-	struct vector *r;
-	struct svalue *v;
+	struct vector* r;
+	struct svalue* v;
 	int cnt;
 
 	if (arr->size < 1)
@@ -625,9 +624,9 @@ struct vector* map_array(arr, func, ob, extra)
 }
 
 static INLINE int sort_array_cmp(func, ob, p1, p2)
-	char *func;struct object *ob;struct svalue *p1, *p2;
+	char* func;struct object* ob;struct svalue* p1, * p2;
 {
-	struct svalue *d;
+	struct svalue* d;
 
 	if (ob->flags & O_DESTRUCTED)
 		error("object used by sort_array destructed");
@@ -650,10 +649,10 @@ static INLINE int sort_array_cmp(func, ob, p1, p2)
 }
 
 struct vector* sort_array(inlist, func, ob)
-	struct vector *inlist;char *func;struct object *ob;
+	struct vector* inlist;char* func;struct object* ob;
 {
-	struct vector *outlist;
-	struct svalue *root, *inpnt;
+	struct vector* outlist;
+	struct svalue* root, * inpnt;
 	int keynum, j;
 
 	keynum = inlist->size;
@@ -715,7 +714,7 @@ struct vector* sort_array(inlist, func, ob)
 /* Turns a structured array of elements into a flat array of elements.
  */
 static int num_elems(arr)
-	struct vector *arr;
+	struct vector* arr;
 {
 	int cnt, il;
 
@@ -728,10 +727,10 @@ static int num_elems(arr)
 }
 
 struct vector* flatten_array(arr)
-	struct vector *arr;
+	struct vector* arr;
 {
 	int max, cnt, il, il2;
-	struct vector *res, *dres;
+	struct vector* res, * dres;
 
 	if (arr->size < 1)
 		return allocate_array(0);
@@ -768,9 +767,9 @@ struct vector* flatten_array(arr)
  *
  */
 struct vector* deep_inventory(ob, take_top)
-	struct object *ob;int take_top;
+	struct object* ob;int take_top;
 {
-	struct vector *dinv, *ainv, *sinv, *tinv;
+	struct vector* dinv, * ainv, * sinv, * tinv;
 	int il;
 
 	ainv = all_inventory(ob);
@@ -809,9 +808,9 @@ struct vector* deep_inventory(ob, take_top)
  This value should be pushed to the stack and then freed.
  */
 struct svalue* sum_array(arr, func, ob, extra)
-	struct vector *arr;char *func;struct object *ob;struct svalue *extra;
+	struct vector* arr;char* func;struct object* ob;struct svalue* extra;
 {
-	struct svalue *ret, v;
+	struct svalue* ret, v;
 
 	int cnt;
 
@@ -842,7 +841,7 @@ struct svalue* sum_array(arr, func, ob, extra)
 }
 
 static INLINE int alist_cmp(p1, p2)
-	struct svalue *p1, *p2;
+	struct svalue* p1, * p2;
 {
 	register int d;
 
@@ -854,10 +853,10 @@ static INLINE int alist_cmp(p1, p2)
 }
 
 struct vector* order_alist(inlist)
-	struct vector *inlist;
+	struct vector* inlist;
 {
-	struct vector *outlist;
-	struct svalue *inlists, *outlists, *root, *inpnt, *insval;
+	struct vector* outlist;
+	struct svalue* inlists, * outlists, * root, * inpnt, * insval;
 	int listnum, keynum, i, j;
 
 	listnum = inlist->size;
@@ -873,7 +872,7 @@ struct vector* order_alist(inlist)
 		/* make sure that strings can be compared by their pointer */
 		if (inpnt->type == T_STRING && inpnt->string_type != STRING_SHARED)
 		{
-			char *str = make_shared_string(inpnt->u.string);
+			char* str = make_shared_string(inpnt->u.string);
 			free_svalue(inpnt);
 			inpnt->type = T_STRING;
 			inpnt->string_type = STRING_SHARED;
@@ -956,7 +955,7 @@ struct vector* order_alist(inlist)
 }
 
 static int search_alist(key, keylist)
-	struct svalue *key;struct vector *keylist;
+	struct svalue* key;struct vector* keylist;
 {
 	int i, o, d;
 
@@ -964,7 +963,7 @@ static int search_alist(key, keylist)
 		return 0;
 	i = (keylist->size) >> 1;
 	o = (i + 2) >> 1;
-	while(1)
+	while (1)
 	{
 		d = alist_cmp(key, &keylist->item[i]);
 		if (d < 0)
@@ -1000,7 +999,7 @@ static int search_alist(key, keylist)
 #define	STRING_REFS(str)	(*(short *)((char *) (str) - sizeof(short)))
 
 struct svalue* insert_alist(key, key_data, list)
-	struct svalue *key, *key_data;struct vector *list;
+	struct svalue* key, * key_data;struct vector* list;
 {
 	static struct svalue stmp;
 	int i, j, ix;
@@ -1029,11 +1028,11 @@ struct svalue* insert_alist(key, key_data, list)
 	stmp.u.vec = allocate_array(list->size);
 	for (i = 0; i < list->size; i++)
 	{
-		struct vector *vtmp;
+		struct vector* vtmp;
 
 		if (ix == keynum || alist_cmp(key, &list->item[0].u.vec->item[ix]))
 		{
-			struct svalue *pstmp = list->item[i].u.vec->item;
+			struct svalue* pstmp = list->item[i].u.vec->item;
 
 			vtmp = allocate_array(keynum + 1);
 			for (j = 0; j < ix; j++)
@@ -1059,7 +1058,7 @@ struct svalue* insert_alist(key, key_data, list)
 }
 
 int assoc(key, list)
-	struct svalue *key;struct vector *list;
+	struct svalue* key;struct vector* list;
 {
 	int i;
 	extern char* findstring(char*);
@@ -1081,9 +1080,9 @@ int assoc(key, list)
 }
 
 struct vector* intersect_alist(a1, a2)
-	struct vector *a1, *a2;
+	struct vector* a1, * a2;
 {
-	struct vector *a3;
+	struct vector* a3;
 	int d, l, i1, i2, a1s, a2s;
 
 	a1s = a1->size;
@@ -1105,9 +1104,9 @@ struct vector* intersect_alist(a1, a2)
 }
 
 struct vector* symmetric_difference_alist(a1, a2)
-	struct vector *a1, *a2;
+	struct vector* a1, * a2;
 {
-	struct vector *a3;
+	struct vector* a3;
 	int d, l, i1, i2, a1s, a2s;
 
 	a1s = a1->size;
@@ -1134,10 +1133,10 @@ struct vector* symmetric_difference_alist(a1, a2)
 }
 
 struct vector* intersect_array(a1, a2)
-	struct vector *a1, *a2;
+	struct vector* a1, * a2;
 {
 	struct vector* order_alist(struct vector*);
-	struct vector *vtmpp1, *vtmpp2, *vtmpp3;
+	struct vector* vtmpp1, * vtmpp2, * vtmpp3;
 	static struct vector vtmp =
 	{ 1, 1,
 #ifdef DEBUG
@@ -1170,12 +1169,12 @@ struct vector* intersect_array(a1, a2)
 }
 
 struct vector* match_regexp(v, pattern)
-	struct vector *v;char *pattern;
+	struct vector* v;char* pattern;
 {
-	regexp *reg;
-	char *res;
+	regexp* reg;
+	char* res;
 	int i, num_match;
-	struct vector *ret;
+	struct vector* ret;
 	extern int eval_cost;
 
 	if (v->size == 0)
@@ -1214,10 +1213,10 @@ struct vector* match_regexp(v, pattern)
  * (Sounds like a contradiction to me /Lars).
  */
 struct vector* inherit_list(ob)
-	struct object *ob;
+	struct object* ob;
 {
-	struct vector *ret;
-	struct program *pr, *plist[256];
+	struct vector* ret;
+	struct program* pr, * plist[256];
 	int il, il2, next, cur;
 
 	plist[0] = ob->prog;

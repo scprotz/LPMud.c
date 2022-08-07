@@ -29,7 +29,7 @@
 #include <netinet/in.h>
 #include <stdio.h>
 
-extern char *inet_ntoa(), *strtok();
+extern char* inet_ntoa(),* strtok();
 
 /* this file should better be defined in config.h ;-) */
 #define ACCESS_FILE "ACCESS.ALLOW"
@@ -41,229 +41,238 @@ extern char *inet_ntoa(), *strtok();
 /* maximal string length to be output */
 #define MAX_MESSAGE 255
 
-struct access_class {
-  int class_num;		/* the class number */
-  int currently;		/* currently <= this number of logged in users */
-  int maximum;			/* 0: disallowed, -1: no maximum */
-  char message[MAX_MESSAGE];	/* message to be printed in case a login can't be permitted */
+struct access_class
+{
+	int class_num; /* the class number */
+	int currently; /* currently <= this number of logged in users */
+	int maximum; /* 0: disallowed, -1: no maximum */
+	char message[MAX_MESSAGE]; /* message to be printed in case a login can't be permitted */
 };
 
-struct access_address {
-  int addr[4];		/* [0..255]: number, -1: all */
-  int hstart, hend;	/* start/end hour */
-  struct access_class *ac;
+struct access_address
+{
+	int addr[4]; /* [0..255]: number, -1: all */
+	int hstart, hend; /* start/end hour */
+	struct access_class* ac;
 };
 
-static struct access_address *addr_tab = 0;
+static struct access_address* addr_tab = 0;
 static int addr_tab_index, addr_tab_size;
-static struct access_class *class_tab = 0;
+static struct access_class* class_tab = 0;
 static int class_tab_index, class_tab_size;
 static time_t last_read = 0;
 
-static void log_access ();
+static void log_access();
 
 /* check the file, and if it was changed, (re)read it into memory */
-static void
-check_read_file (name)
-     char *name;
+static void check_read_file(name)
+	char* name;
 {
-  struct stat stb;
-  FILE *in;
+	struct stat stb;
+	FILE* in;
 
-  if (!(stat (name, &stb)))
-    {
-      if (stb.st_mtime > last_read)
+	if (!(stat(name, &stb)))
 	{
-	  /* throw away the old information */
-	  if (addr_tab) free ((char *)addr_tab), addr_tab = 0;
-	  if (class_tab) free ((char *)class_tab), class_tab = 0;
-	  addr_tab_size = 10;
-	  addr_tab_index = 0;
-	  addr_tab = (struct access_address *)
-	      malloc (addr_tab_size * sizeof (struct access_address));
-	  class_tab_size = 10;
-	  class_tab_index = 0;
-	  class_tab = (struct access_class *)
-	      malloc (class_tab_size * sizeof (struct access_class));
-	  
-	  if ((in = fopen (name, "r")))
-	    {
-	      while (!feof (in))
+		if (stb.st_mtime > last_read)
 		{
-		  char buffer [2*MAX_MESSAGE]; /* heuristic ;-)) */
-		  char addr1[4], addr2[4], addr3[4], addr4[4];
-		  struct access_address aa;
-		  struct access_class ac;
-		  char *cp;
-		  int i;
+			/* throw away the old information */
+			if (addr_tab)
+				free((char*) addr_tab), addr_tab = 0;
+			if (class_tab)
+				free((char*) class_tab), class_tab = 0;
+			addr_tab_size = 10;
+			addr_tab_index = 0;
+			addr_tab = (struct access_address*) malloc(
+					addr_tab_size * sizeof(struct access_address));
+			class_tab_size = 10;
+			class_tab_index = 0;
+			class_tab = (struct access_class*) malloc(
+					class_tab_size * sizeof(struct access_class));
 
-		  if (! fgets (buffer, 2*MAX_MESSAGE, in)) break;
-		  if (buffer[0] == '#') continue; /* a comment, skip */
-		  /* if there is no ':' in there, this is probably an empty line */
-		  if (! strchr (buffer, ':')) continue;
-		  
-		  /* more or less no error-checking ;-)) */
-		  strncpy (addr1, strtok (buffer, "."), 3);
-		  strncpy (addr2, strtok (0, "."), 3);
-		  strncpy (addr3, strtok (0, "."), 3);
-		  strncpy (addr4, strtok (0, ":"), 3);
-
-		  ac.class_num = atoi (strtok (0, ":"));
-		  ac.currently = 0;
-		  ac.maximum = atoi (((cp = strtok (0, ":")), (cp && *cp) ? cp : "0"));
-		  aa.hstart = atoi (((cp = strtok (0, ":")), (cp && *cp) ? cp : "0"));
-		  aa.hend   = atoi (((cp = strtok (0, ":")), (cp && *cp) ? cp : "0"));
-		  strncpy (ac.message,
-			   (cp = strtok (0, "\n")) ? cp : "", MAX_MESSAGE-1);
-
-		  /* check whether this class is already defined */
-		  for (i = 0; i < class_tab_index; i++)
-		    if (class_tab[i].class_num == ac.class_num)
-		      {
-			/* in this case just set a pointer to the defined class */
-			aa.ac = &class_tab[i];
-			break;
-		      }
-
-		  /* if not, define it */
-		  if (i == class_tab_index)
-		    {
-		      class_tab[class_tab_index] = ac;
-		      if (++class_tab_index == class_tab_size)
+			if ((in = fopen(name, "r")))
 			{
-			  class_tab_size <<= 1;
-			  class_tab = (struct access_class *)
-			      realloc ((char *)class_tab,
-				       class_tab_size * sizeof (struct access_class));
-			}
+				while (!feof(in))
+				{
+					char buffer[2 * MAX_MESSAGE]; /* heuristic ;-)) */
+					char addr1[4], addr2[4], addr3[4], addr4[4];
+					struct access_address aa;
+					struct access_class ac;
+					char* cp;
+					int i;
 
-		      aa.ac = &class_tab[i];
-		    }
+					if (!fgets(buffer, 2 * MAX_MESSAGE, in))
+						break;
+					if (buffer[0] == '#')
+						continue; /* a comment, skip */
+					/* if there is no ':' in there, this is probably an empty line */
+					if (!strchr(buffer, ':'))
+						continue;
 
-		  /* now set up the address, * maps into -1, anything else is vanilla */
-		  aa.addr[0] = strcmp(addr1, "*") ? atoi (addr1) : -1;
-		  aa.addr[1] = strcmp(addr2, "*") ? atoi (addr2) : -1;
-		  aa.addr[2] = strcmp(addr3, "*") ? atoi (addr3) : -1;
-		  aa.addr[3] = strcmp(addr4, "*") ? atoi (addr4) : -1;
+					/* more or less no error-checking ;-)) */
+					strncpy(addr1, strtok(buffer, "."), 3);
+					strncpy(addr2, strtok(0, "."), 3);
+					strncpy(addr3, strtok(0, "."), 3);
+					strncpy(addr4, strtok(0, ":"), 3);
 
-		  /* and add it to our address table */
-		  addr_tab[addr_tab_index] = aa;
-		  if (++addr_tab_index == addr_tab_size)
-		    {
-		      addr_tab_size <<= 1;
-		      addr_tab = (struct access_address *)
-			  realloc ((char *)addr_tab,
-				   addr_tab_size * sizeof (struct access_address));
-		    }
-		} /* over total input */
-	      fclose (in);
-	      last_read = stb.st_mtime;
-	      return;
-	    } /* if open succeeded */
+					ac.class_num = atoi(strtok(0, ":"));
+					ac.currently = 0;
+					ac.maximum = atoi(
+							((cp = strtok(0, ":")), (cp && *cp) ? cp : "0"));
+					aa.hstart = atoi(
+							((cp = strtok(0, ":")), (cp && *cp) ? cp : "0"));
+					aa.hend = atoi(
+							((cp = strtok(0, ":")), (cp && *cp) ? cp : "0"));
+					strncpy(ac.message, ((cp = strtok(0, "\n"))) ? cp : "",
+					MAX_MESSAGE - 1);
+
+					/* check whether this class is already defined */
+					for (i = 0; i < class_tab_index; i++)
+						if (class_tab[i].class_num == ac.class_num)
+						{
+							/* in this case just set a pointer to the defined class */
+							aa.ac = &class_tab[i];
+							break;
+						}
+
+					/* if not, define it */
+					if (i == class_tab_index)
+					{
+						class_tab[class_tab_index] = ac;
+						if (++class_tab_index == class_tab_size)
+						{
+							class_tab_size <<= 1;
+							class_tab = (struct access_class*) realloc(
+									(char*) class_tab,
+									class_tab_size
+											* sizeof(struct access_class));
+						}
+
+						aa.ac = &class_tab[i];
+					}
+
+					/* now set up the address, * maps into -1, anything else is vanilla */
+					aa.addr[0] = strcmp(addr1, "*") ? atoi(addr1) : -1;
+					aa.addr[1] = strcmp(addr2, "*") ? atoi(addr2) : -1;
+					aa.addr[2] = strcmp(addr3, "*") ? atoi(addr3) : -1;
+					aa.addr[3] = strcmp(addr4, "*") ? atoi(addr4) : -1;
+
+					/* and add it to our address table */
+					addr_tab[addr_tab_index] = aa;
+					if (++addr_tab_index == addr_tab_size)
+					{
+						addr_tab_size <<= 1;
+						addr_tab = (struct access_address*) realloc(
+								(char*) addr_tab,
+								addr_tab_size * sizeof(struct access_address));
+					}
+				} /* over total input */
+				fclose(in);
+				last_read = stb.st_mtime;
+				return;
+			} /* if open succeeded */
+		}
 	}
-    }
 }
 
 /* the main function, validate an address (peer of given socket).
  * return 0, if access is not permitted, else return a pointer to the
  * corresponding class. Pass that pointer on logout to "release_host_access".
  */
-struct access_class *
-allow_host_access (sockfd, outfd)
-     int sockfd, outfd;
+struct access_class* allow_host_access(sockfd, outfd)
+	int sockfd, outfd;
 {
-  struct sockaddr_in apa;
-  int addr[4];
-  socklen_t len;
-  char *ipname;
-  struct access_address *ap;
-  int i;
+	struct sockaddr_in apa;
+	int addr[4];
+	socklen_t len;
+	char* ipname;
+	struct access_address* ap;
+	int i;
 #define STRING(str) str,strlen(str)
-  
-  check_read_file (ACCESS_FILE);
 
-  len = sizeof (apa);
-  if (getpeername (sockfd, (struct sockaddr *)&apa, &len) == -1)
-    {
-      perror ("getpeername");
-      write (outfd, STRING ("Sorry, internal game error.\n"));
-      return 0;
-    }
- 	struct in_addr my_in_addr;	
- 	my_in_addr.s_addr = ntohl(apa.sin_addr.s_addr);
-	ipname = inet_ntoa(my_in_addr);
-  sscanf (ipname, "%d.%d.%d.%d", addr, addr + 1, addr + 2, addr + 3);
+	check_read_file(ACCESS_FILE);
 
-  for (i = 0, ap = addr_tab; i < addr_tab_index; i++, ap++)
-    {
-      int pos;
-      /* check for address. match if either equal or wildcard */
-      for (pos = 0; pos < 4; pos++)
-	if (ap->addr[pos] != addr[pos] && ap->addr[pos] != -1) break;
-
-      if (pos == 4) /* a match */
+	len = sizeof(apa);
+	if (getpeername(sockfd, (struct sockaddr*) &apa, &len) == -1)
 	{
-	  /* if hstart and hend are not == 0, check whether ap is in the
-	   * interval */
-	  if (ap->hstart || ap->hend)
-	    {
-	      time_t now = time(0);
-	      struct tm *tm = localtime(&now);
-	      if (ap->hstart < ap->hend)
-		{
-		  if (tm->tm_hour < ap->hstart || tm->tm_hour > ap->hend)
-		    continue;
-		}
-	      else
-		{
-		  if (tm->tm_hour > ap->hend && tm->tm_hour < ap->hstart)
-		    continue;
-		}
-	    }
-
-	  /* no maxmium? */
-	  if (ap->ac->maximum == -1) 
-            { /*gc*/
-              log_access (ipname, 1);
-              return ap->ac;
-            }
-	  /* else there is a maximum, in the worst case 0 */
-	  if (ap->ac->currently >= ap->ac->maximum)
-	    {
-	      write (outfd, ap->ac->message, strlen (ap->ac->message));
-	      write (outfd, "\n", 1);
-	      shutdown (outfd, 2); close (outfd);
-	      log_access (ipname, 0);
-	      return 0;
-	    }
-	  /* bump up the counter */
-	  ap->ac->currently ++;
-	  log_access (ipname, 1);
-	  return ap->ac;
+		perror("getpeername");
+		write(outfd, STRING("Sorry, internal game error.\n"));
+		return 0;
 	}
-    }
+	struct in_addr my_in_addr;
+	my_in_addr.s_addr = ntohl(apa.sin_addr.s_addr);
+	ipname = inet_ntoa(my_in_addr);
+	sscanf(ipname, "%d.%d.%d.%d", addr, addr + 1, addr + 2, addr + 3);
 
-  /* default is: don't allow access */
-  write (outfd, STRING("Sorry, you're not allowed to use LPMUD.\n"));
-  shutdown (outfd, 2); close (outfd);
-  log_access (ipname, 0);
-  return 0;
+	for (i = 0, ap = addr_tab; i < addr_tab_index; i++, ap++)
+	{
+		int pos;
+		/* check for address. match if either equal or wildcard */
+		for (pos = 0; pos < 4; pos++)
+			if (ap->addr[pos] != addr[pos] && ap->addr[pos] != -1)
+				break;
+
+		if (pos == 4) /* a match */
+		{
+			/* if hstart and hend are not == 0, check whether ap is in the
+			 * interval */
+			if (ap->hstart || ap->hend)
+			{
+				time_t now = time(0);
+				struct tm* tm = localtime(&now);
+				if (ap->hstart < ap->hend)
+				{
+					if (tm->tm_hour < ap->hstart || tm->tm_hour > ap->hend)
+						continue;
+				}
+				else
+				{
+					if (tm->tm_hour > ap->hend && tm->tm_hour < ap->hstart)
+						continue;
+				}
+			}
+
+			/* no maxmium? */
+			if (ap->ac->maximum == -1)
+			{ /*gc*/
+				log_access(ipname, 1);
+				return ap->ac;
+			}
+			/* else there is a maximum, in the worst case 0 */
+			if (ap->ac->currently >= ap->ac->maximum)
+			{
+				write(outfd, ap->ac->message, strlen(ap->ac->message));
+				write(outfd, "\n", 1);
+				shutdown(outfd, 2);
+				close(outfd);
+				log_access(ipname, 0);
+				return 0;
+			}
+			/* bump up the counter */
+			ap->ac->currently++;
+			log_access(ipname, 1);
+			return ap->ac;
+		}
+	}
+
+	/* default is: don't allow access */
+	write(outfd, STRING("Sorry, you're not allowed to use LPMUD.\n"));
+	shutdown(outfd, 2);
+	close(outfd);
+	log_access(ipname, 0);
+	return 0;
 }
 
 /* decrement the currently counter once. This is called, when a user loggs out. */
 
-void
-release_host_access (class)
-     struct access_class *class;
+void release_host_access(class)
+	struct access_class* class;
 {
-  if (class->maximum != -1 && class->currently > 0)
-    -- class->currently;
+	if (class->maximum != -1 && class->currently > 0)
+		--class->currently;
 }
 
-static void
-log_access (addr, ok)
-     char *addr;
-     int ok;
+static void log_access(addr, ok)
+	char* addr;int ok;
 {
 #ifdef ACCESS_LOG
   FILE *log = fopen (ACCESS_LOG, "a");

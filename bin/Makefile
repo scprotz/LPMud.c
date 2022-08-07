@@ -82,8 +82,9 @@ driver: $(OBJ)
 	-mv driver driver.old
 	$(CC) $(CFLAGS) $(OBJ) -o driver $(LIBS) -lcrypt
 
-list_funcs:
+list_funcs: func_spec.c
 	@$(CC) -E $(CFLAGS) func_spec.c
+	rm func_spec.c
 
 make_func.c: make_func.y
 	yacc make_func.y
@@ -189,8 +190,12 @@ array.o: interpret.h object.h config.h wiz_list.h regexp.h exec.h
 
 access_check.o: config.h
 
+func_spec.c: func_spec.lpc
+	cp func_spec.lpc func_spec.c	
+
 lang.y efun_defs.h: func_spec.c make_func prelang.y postlang.y config.h
-	@$(CC) -E $(CFLAGS) func_spec.c > list_funcs.txt 
+	@$(CC) -E $(CFLAGS) func_spec.c > list_funcs.txt
+	rm func_spec.c 
 	./make_func > efun_defs.h
 
 simul_efun.o: interpret.h object.h exec.h

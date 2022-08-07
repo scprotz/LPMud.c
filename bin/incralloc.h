@@ -4,10 +4,11 @@
  * an area, as it might be moved.
  */
 
-struct mem_block {
-    char *block;
-    int current_size;
-    int max_size;
+struct mem_block
+{
+	char* block;
+	int current_size;
+	int max_size;
 };
 
 #define START_BLOCK_SIZE	4096

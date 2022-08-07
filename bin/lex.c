@@ -22,10 +22,10 @@
 
 int current_line;
 int total_lines; /* Used to compute average compiled lines/s */
-char *current_file;
+char* current_file;
 int pragma_strict_types; /* Force usage of strict types. */
 int pragma_save_types; /* Save argument types after compilation */
-struct lpc_predef_s *lpc_predefs = NULL;
+struct lpc_predef_s* lpc_predefs = NULL;
 //extern char *argument_name;
 extern char* xalloc();
 static int number(int), ident(char*), string(char*);
@@ -38,15 +38,15 @@ static void myungetc(int);
 static int lookup_resword(char*);
 static int cond_get_exp(int);
 static int exgetc();
-static FILE *yyin;
+static FILE* yyin;
 static int lex_fatal;
-static char **inc_list;
+static char** inc_list;
 static int inc_list_size;
 
 #define EXPANDMAX 25000
 static int nexpands;
 
-extern char *local_names[];
+extern char* local_names[];
 extern int current_number_of_locals;
 
 extern char* string_copy();
@@ -65,41 +65,41 @@ static int slast, lastchar;
 
 struct defn
 {
-	struct defn *next;
-	char *name;
+	struct defn* next;
+	char* name;
 	int undef;
-	char *exps;
+	char* exps;
 	int nargs;
 };
 struct defn* lookup_define();
 
 static struct ifstate
 {
-	struct ifstate *next;
+	struct ifstate* next;
 	int state;
-} *iftop = 0;
+}* iftop = 0;
 #define EXPECT_ELSE 1
 #define EXPECT_ENDIF 2
 
 static struct incstate
 {
-	struct incstate *next;
-	FILE *yyin;
+	struct incstate* next;
+	FILE* yyin;
 	int line;
-	char *file;
+	char* file;
 	int slast, lastchar;
 	int pragma_strict_types;
-} *inctop = 0;
+}* inctop = 0;
 
 #define DEFMAX 10000
 static char defbuf[DEFMAX];
 static int nbuf;
-static char *outp;
+static char* outp;
 
 void merge(name, dest)
-	char *name, *dest;
+	char* name, * dest;
 {
-	char *from;
+	char* from;
 
 	strcpy(dest, current_file);
 	if ((from = strrchr(dest, '/'))) /* strip filename */
@@ -120,7 +120,7 @@ void merge(name, dest)
 	{
 		if (!strncmp(from, "../", 3))
 		{
-			char *tmp;
+			char* tmp;
 
 			if (*dest == 0) /* including from above mudlib is NOT allowed */
 				break;
@@ -137,7 +137,7 @@ void merge(name, dest)
 		}
 		else
 		{ /* append first component to dest */
-			char *q;
+			char* q;
 
 			if (*dest)
 				strcat(dest, "/"); /* only if dest is not empty !! */
@@ -193,16 +193,16 @@ static INLINE int gobble(c)
 }
 
 static void lexerror(s)
-	char *s;
+	char* s;
 {
 	yyerror(s);
 	lex_fatal++;
 }
 
 static int skip_to(token, atoken)
-	char *token, *atoken;
+	char* token, * atoken;
 {
-	char b[20], *p;
+	char b[20], * p;
 	int c;
 	int nest;
 
@@ -269,7 +269,7 @@ static int skip_to(token, atoken)
 static void handle_cond(c)
 	int c;
 {
-	struct ifstate *p;
+	struct ifstate* p;
 
 	/*fprintf(stderr, "cond %d\n", c);*/
 	if (c || skip_to("else", "endif"))
@@ -289,11 +289,11 @@ static void handle_cond(c)
 }
 
 static FILE* inc_open(buf, name)
-	char *buf, *name;
+	char* buf, * name;
 {
-	FILE *f;
+	FILE* f;
 	int i;
-	char *p;
+	char* p;
 
 	merge(name, buf);
 	if ((f = fopen(buf, "r")) != NULL)
@@ -317,12 +317,12 @@ static FILE* inc_open(buf, name)
 }
 
 static void handle_include(name)
-	char *name;
+	char* name;
 {
-	char *p;
+	char* p;
 	char buf[1024];
-	FILE *f;
-	struct incstate *is;
+	FILE* f;
+	struct incstate* is;
 	int delim;
 
 	/*fprintf(stderr, "handle include '%s'\n", name);*/
@@ -333,10 +333,10 @@ static void handle_include(name)
 	}
 	if (*name != '"' && *name != '<')
 	{
-		struct defn *d;
+		struct defn* d;
 		if ((d = lookup_define(name)) && d->nargs == -1)
 		{
-			char *q;
+			char* q;
 			q = d->exps;
 			while (isspace(*q))
 				q++;
@@ -427,9 +427,9 @@ static void skip_comment()
 #define TRY(c, t) if (gobble(c)) return t
 
 static void deltrail(sp)
-	char *sp;
+	char* sp;
 {
-	char *p;
+	char* p;
 	p = sp;
 	if (!*p)
 	{
@@ -452,7 +452,7 @@ static void deltrail(sp)
     }
 
 static void handle_pragma(str)
-	char *str;
+	char* str;
 {
 	if (strcmp(str, "strict_types") == 0)
 	{
@@ -466,7 +466,7 @@ static void handle_pragma(str)
 
 static int yylex1()
 {
-	register char *yyp;
+	register char* yyp;
 	register int c;
 
 	for (;;)
@@ -480,7 +480,7 @@ static int yylex1()
 			case EOF:
 				if (inctop)
 				{
-					struct incstate *p;
+					struct incstate* p;
 					p = inctop;
 					fclose(yyin);
 					/*fprintf(stderr, "popping to %s\n", p->file);*/
@@ -500,7 +500,7 @@ static int yylex1()
 				}
 				if (iftop)
 				{
-					struct ifstate *p = iftop;
+					struct ifstate* p = iftop;
 					yyerror(
 							p->state == EXPECT_ENDIF ?
 									"Missing #endif" : "Missing #else");
@@ -602,7 +602,7 @@ static int yylex1()
 			case '#':
 				if (lastchar == '\n')
 				{
-					char *sp = 0;
+					char* sp = 0;
 					int quote;
 
 					yyp = yytext;
@@ -715,7 +715,7 @@ static int yylex1()
 					{
 						if (iftop && iftop->state == EXPECT_ELSE)
 						{
-							struct ifstate *p = iftop;
+							struct ifstate* p = iftop;
 
 							/*fprintf(stderr, "found else\n");*/
 							iftop = p->next;
@@ -735,7 +735,7 @@ static int yylex1()
 								&& (iftop->state == EXPECT_ENDIF
 										|| iftop->state == EXPECT_ELSE))
 						{
-							struct ifstate *p = iftop;
+							struct ifstate* p = iftop;
 
 							/*fprintf(stderr, "found endif\n");*/
 							iftop = p->next;
@@ -748,7 +748,7 @@ static int yylex1()
 					}
 					else if (strcmp("undef", yytext) == 0)
 					{
-						struct defn *d;
+						struct defn* d;
 
 						deltrail(sp);
 						if ((d = lookup_define(sp)))
@@ -917,7 +917,7 @@ int yylex()
 extern YYSTYPE yylval;
 
 static int islocal(str)
-	char *str;
+	char* str;
 {
 	int i;
 
@@ -930,7 +930,7 @@ static int islocal(str)
 }
 
 static int ident(str)
-	char *str;
+	char* str;
 {
 	int i;
 
@@ -945,9 +945,9 @@ static int ident(str)
 }
 
 static int string(str)
-	char *str;
+	char* str;
 {
-	char *p;
+	char* p;
 
 	if (!*str)
 	{
@@ -997,7 +997,7 @@ void end_new_file()
 {
 	while (inctop)
 	{
-		struct incstate *p;
+		struct incstate* p;
 		p = inctop;
 		fclose(yyin);
 		free(current_file);
@@ -1008,7 +1008,7 @@ void end_new_file()
 	}
 	while (iftop)
 	{
-		struct ifstate *p;
+		struct ifstate* p;
 
 		p = iftop;
 		iftop = p->next;
@@ -1017,9 +1017,9 @@ void end_new_file()
 }
 
 void start_new_file(f)
-	FILE *f;
+	FILE* f;
 {
-	struct lpc_predef_s *tmpf;
+	struct lpc_predef_s* tmpf;
 
 	free_defines();
 	add_define("LPC3", -1, "");
@@ -1065,7 +1065,7 @@ void start_new_file(f)
  */
 struct keyword
 {
-	char *word;
+	char* word;
 	short token;
 	short min_args; /* Minimum number of arguments. */
 	short max_args; /* Maximum number of arguments. */
@@ -1112,7 +1112,7 @@ static struct keyword reswords[] =
 struct instr instrs[256];
 
 static void add_instr_name(name, n)
-	char *name;int n;
+	char* name;int n;
 {
 	instrs[n - F_OFFSET].name = name;
 }
@@ -1193,12 +1193,12 @@ char* get_f_name(n)
 }
 
 static int lookupword(s, words, h)
-	char *s;struct keyword *words;int h;
+	char* s;struct keyword* words;int h;
 {
 	int i, l, r;
 
 	l = 0;
-	while(1)
+	while (1)
 	{
 		i = (l + h) / 2;
 		r = strcmp(s, words[i].word);
@@ -1214,13 +1214,13 @@ static int lookupword(s, words, h)
 }
 
 static int lookup_resword(s)
-	char *s;
+	char* s;
 {
 	return lookupword(s, reswords, NELEM(reswords));
 }
 
 int lookup_predef(s)
-	char *s;
+	char* s;
 {
 	return lookupword(s, predefs, NELEM(predefs));
 }
@@ -1245,7 +1245,7 @@ static int cmygetc()
 {
 	int c;
 
-	while(1)
+	while (1)
 	{
 		c = mygetc();
 		if (c == '/')
@@ -1262,7 +1262,7 @@ static int cmygetc()
 
 static void refill()
 {
-	char *p;
+	char* p;
 	int c;
 
 	p = yytext;
@@ -1286,12 +1286,12 @@ static void refill()
 }
 
 static void handle_define(yyt)
-	char *yyt;
+	char* yyt;
 {
 	char namebuf[NSIZE];
 	char args[NARGS][NSIZE];
 	char mtext[MLEN];
-	char *p, *q;
+	char* p, * q;
 
 	p = yyt;
 	strcat(p, " ");
@@ -1301,7 +1301,7 @@ static void handle_define(yyt)
 	{ /* if "function macro" */
 		int arg;
 		int inid;
-		char *ids;
+		char* ids;
 		p++; /* skip '(' */
 		SKIPWHITE;
 		if (*p == ')')
@@ -1415,7 +1415,7 @@ static void myungetc(c)
 }
 
 static void add_input(p)
-	char *p;
+	char* p;
 {
 	int l = strlen(p);
 
@@ -1432,13 +1432,13 @@ static void add_input(p)
 }
 
 #define DEFHASH 33
-struct defn *defns[DEFHASH];
+struct defn* defns[DEFHASH];
 #define defhash(s) hashstr(s, 10, DEFHASH)
 
 static void add_define(name, nargs, exps)
-	char *name, *exps;int nargs;
+	char* name, * exps;int nargs;
 {
-	struct defn *p;
+	struct defn* p;
 	int h;
 
 	if ((p = lookup_define(name)))
@@ -1466,7 +1466,7 @@ static void add_define(name, nargs, exps)
 
 static void free_defines()
 {
-	struct defn *p, *q;
+	struct defn* p, * q;
 	int i;
 
 	for (i = 0; i < DEFHASH; i++)
@@ -1484,9 +1484,9 @@ static void free_defines()
 }
 
 struct defn* lookup_define(s)
-	char *s;
+	char* s;
 {
-	struct defn *p;
+	struct defn* p;
 	int h;
 
 	h = defhash(s);
@@ -1504,11 +1504,11 @@ struct defn* lookup_define(s)
 /* Check if yytext is a macro and expand if it is. */
 static int expand_define()
 {
-	struct defn *p;
+	struct defn* p;
 	char expbuf[DEFMAX];
-	char *args[NARGS];
+	char* args[NARGS];
 	char buf[DEFMAX];
-	char *q, *e, *b;
+	char* q, * e, * b;
 
 	if (nexpands++ > EXPANDMAX)
 	{
@@ -1667,7 +1667,7 @@ static int expand_define()
 
 static int exgetc()
 {
-	register char c, *yyp;
+	register char c, * yyp;
 
 	c = mygetc();
 	while ( isalpha(c) || c == '_')
@@ -1975,11 +1975,11 @@ static int cond_get_exp(priority)
 }
 
 void set_inc_list(sv)
-	struct svalue *sv;
+	struct svalue* sv;
 {
 	int i;
-	struct vector *v;
-	char *p;
+	struct vector* v;
+	char* p;
 
 	if (sv == 0)
 	{

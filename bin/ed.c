@@ -119,17 +119,16 @@ int version = 5; /* used only in the "set" function, for i.d. */
 /**  Global variables  **/
 
 //extern struct program *current_prog;
-
 struct line
 {
 	int l_stat; /* empty, mark */
-	struct line *l_prev;
-	struct line *l_next;
+	struct line* l_prev;
+	struct line* l_next;
 	char l_buff[1];
 };
 typedef struct line LINE;
 
-extern struct object *command_giver;
+extern struct object* command_giver;
 void set_prompt(char*);
 
 #ifndef toupper
@@ -189,9 +188,8 @@ static void _count_blanks(char *str, int blanks);
 
 typedef struct regexps regexp;
 
-
 char inlin[MAXLINE];
-char *inptr; /* tty input buffer */
+char* inptr; /* tty input buffer */
 struct ed_buffer
 {
 	int diag; /* diagnostic-output? flag */
@@ -207,14 +205,14 @@ struct ed_buffer
 
 	LINE Line0;
 	int CurLn;
-	LINE *CurPtr; /* CurLn and CurPtr must be kept in step */
+	LINE* CurPtr; /* CurLn and CurPtr must be kept in step */
 	int LastLn;
 	int Line1, Line2, nlines;
 	int flags;
 	int appending;
 	int moring; /* used for the wait line of help */
-	char *exit_fn; /* Function to be called when player exits */
-	struct object *exit_ob; /* in this object */
+	char* exit_fn; /* Function to be called when player exits */
+	struct object* exit_ob; /* in this object */
 	int shiftwidth;
 	int leading_blanks;
 	int cur_autoindent;
@@ -222,10 +220,10 @@ struct ed_buffer
 
 struct tbl
 {
-	char *t_str;
+	char* t_str;
 	int t_and_mask;
 	int t_or_mask;
-} *t, tbl[] =
+}* t, tbl[] =
 {
 { "number", ~FALSE, NFLG_MASK },
 { "nonumber", ~NFLG_MASK, FALSE },
@@ -303,7 +301,7 @@ int append(line, glob)
 }
 
 int more_append(str)
-	char *str;
+	char* str;
 {
 	if (str[0] == '.' && str[1] == '\0')
 	{
@@ -348,7 +346,7 @@ static void count_blanks(line)
 }
 
 static void _count_blanks(str, blanks)
-	char *str;int blanks;
+	char* str;int blanks;
 {
 	for (; *str; str++)
 	{
@@ -366,10 +364,10 @@ static void _count_blanks(str, blanks)
 
 int ckglob()
 {
-	regexp *glbpat;
-	char c, delim, *lin;
+	regexp* glbpat;
+	char c, delim, * lin;
 	int num;
-	LINE *ptr;
+	LINE* ptr;
 
 	c = *inptr;
 
@@ -441,7 +439,7 @@ int deflt(def1, def2)
 int del(from, to)
 	int from, to;
 {
-	LINE *first, *last, *next, *tmp;
+	LINE* first, * last, * next, * tmp;
 
 	if (from < 1)
 		from = 1;
@@ -478,7 +476,7 @@ int dolst(line1, line2)
  * at the escaped character and the translated character is returned.
  */
 int esc(s)
-	char **s;
+	char** s;
 {
 	register int rval;
 
@@ -540,7 +538,7 @@ int doprnt(from, to)
 }
 
 void prntln(str, vflg, lin)
-	char *str;int vflg, lin;
+	char* str;int vflg, lin;
 {
 	if (lin)
 		add_message("%7d ", lin);
@@ -584,10 +582,10 @@ void putcntl(c)
 /*	egets.c	*/
 
 int egets(str, size, stream)
-	char *str;int size;FILE *stream;
+	char* str;int size;FILE* stream;
 {
 	int c, count;
-	char *cp;
+	char* cp;
 
 	for (count = 0, cp = str; size > count;)
 	{
@@ -631,9 +629,9 @@ int egets(str, size, stream)
 } /* egets */
 
 int doread(lin, fname)
-	int lin;char *fname;
+	int lin;char* fname;
 {
-	FILE *fp;
+	FILE* fp;
 	int err;
 	unsigned long bytes;
 	unsigned int lines;
@@ -678,14 +676,14 @@ int doread(lin, fname)
 } /* doread */
 
 int dowrite(from, to, fname, apflg)
-	int from, to;char *fname;int apflg;
+	int from, to;char* fname;int apflg;
 {
-	FILE *fp;
+	FILE* fp;
 	int lin, err;
 	unsigned int lines;
 	unsigned long bytes;
-	char *str;
-	LINE *lptr;
+	char* str;
+	LINE* lptr;
 
 	err = 0;
 	lines = bytes = 0;
@@ -720,10 +718,10 @@ int dowrite(from, to, fname, apflg)
 /*	find.c	*/
 
 int find(pat, dir)
-	regexp *pat;int dir;
+	regexp* pat;int dir;
 {
 	int i, num;
-	LINE *lin;
+	LINE* lin;
 
 	dir ? nextCurLn() : prevCurLn();
 	num = P_CURLN;
@@ -779,8 +777,8 @@ char* getfn(writeflg)
 	int writeflg;
 {
 	static char file[MAXFNAME];
-	char *cp;
-	char *file2;
+	char* cp;
+	char* file2;
 #ifndef COMPAT_MODE
     struct svalue *ret;
 #endif
@@ -836,7 +834,7 @@ char* getfn(writeflg)
 int getnum(first)
 	int first;
 {
-	regexp *srchpat;
+	regexp* srchpat;
 	int num;
 	char c;
 
@@ -952,7 +950,7 @@ int getlst()
 LINE* getptr(num)
 	int num;
 {
-	LINE *ptr;
+	LINE* ptr;
 	int j;
 
 	if (2 * num > P_LASTLN && num <= P_LASTLN)
@@ -973,10 +971,10 @@ LINE* getptr(num)
 /*	getrhs.c	*/
 
 int getrhs(sub)
-	char *sub;
+	char* sub;
 {
 	char delim = *inptr++;
-	char *outmax = sub + MAXPAT;
+	char* outmax = sub + MAXPAT;
 	if (delim == NL || *inptr == NL) /* check for eol */
 		return ( ERR);
 	while (*inptr != delim && *inptr != NL)
@@ -1065,10 +1063,10 @@ int getrhs(sub)
 /*	ins.c	*/
 
 int ins(str)
-	char *str;
+	char* str;
 {
-	char *cp;
-	LINE *new, *nxt;
+	char* cp;
+	LINE* new, * nxt;
 	int len;
 
 	do
@@ -1101,8 +1099,8 @@ int join(first, last)
 	int first, last;
 {
 	char buf[MAXLINE];
-	char *cp = buf, *str;
-	LINE *lin;
+	char* cp = buf, * str;
+	LINE* lin;
 	int num;
 
 	if (first <= 0 || first > last || last > P_LASTLN)
@@ -1144,7 +1142,7 @@ int move(num)
 	int num;
 {
 	int range;
-	LINE *before, *first, *last, *after;
+	LINE* before, * first, * last, * after;
 
 	if ( P_LINE1 <= num && num <= P_LINE2)
 		return ( ERR);
@@ -1203,7 +1201,7 @@ int transfer(num)
 
 regexp* optpat()
 {
-	char delim, str[MAXPAT], *cp;
+	char delim, str[MAXPAT], * cp;
 
 	delim = *inptr++;
 	if (delim == NL)
@@ -1227,7 +1225,7 @@ regexp* optpat()
 
 /* regerror.c */
 void regerror(s)
-	char *s;
+	char* s;
 {
 	add_message("ed: %s\n", s);
 }
@@ -1278,7 +1276,7 @@ int set()
 	}
 	if (!strcmp(word, "save"))
 	{
-		struct svalue *ret;
+		struct svalue* ret;
 		push_object(command_giver);
 		push_number( P_SHIFTWIDTH | P_FLAGS);
 		ret = apply_master_ob("save_ed_setup", 2);
@@ -1316,14 +1314,14 @@ void set_ed_buf()
 /*	subst.c	*/
 
 int subst(pat, sub, gflg, pflag)
-	regexp *pat;char *sub;int gflg, pflag;
+	regexp* pat;char* sub;int gflg, pflag;
 {
 	int nchngd = 0;
-	char *txtptr;
-	char *new, *old, buf[MAXLINE];
+	char* txtptr;
+	char* new, * old, buf[MAXLINE];
 	int space; /* amylaar */
 	int still_running = 1;
-	LINE *lastline = getptr( P_LINE2);
+	LINE* lastline = getptr( P_LINE2);
 
 	if (P_LINE1 <= 0)
 		return ( SUB_FAIL);
@@ -1393,7 +1391,7 @@ int indent_error;
 static int indent_code()
 {
 	int from, to, current;
-	char *inlip;
+	char* inlip;
 	/* static char	locti[MAXLINE]; */
 	/* static char idented[MAXLINE]; */
 	from = 1;
@@ -1422,7 +1420,7 @@ static int indent_code()
 }
 
 static int strip_buff(line, buff2)
-	int line;char *buff2;
+	int line;char* buff2;
 {
 	int i;
 	int i2;
@@ -1644,11 +1642,11 @@ int docmd(glob)
 	int glob;
 {
 	static char rhs[MAXPAT];
-	regexp *subpat;
+	regexp* subpat;
 	int c, err, line3;
 	int apflg, pflag, gflag;
 	int nchng;
-	char *fptr;
+	char* fptr;
 
 	pflag = FALSE;
 	Skip_White_Space;
@@ -1990,8 +1988,8 @@ int docmd(glob)
 int doglob()
 {
 	int lin, status;
-	char *cmd;
-	LINE *ptr;
+	char* cmd;
+	LINE* ptr;
 
 	cmd = inptr;
 
@@ -2028,9 +2026,9 @@ int doglob()
  * code to maintain a list of locked files.
  */
 void ed_start(file_arg, exit_fn, exit_ob)
-	char *file_arg;char *exit_fn;struct object *exit_ob;
+	char* file_arg;char* exit_fn;struct object* exit_ob;
 {
-	struct svalue *setup;
+	struct svalue* setup;
 	if (!command_giver->interactive)
 		error("Tried to start an ed session on a non-interative player.\n");
 	if (ED_BUFFER)
@@ -2100,8 +2098,8 @@ static void free_ed_buffer()
 	clrbuf();
 	if (ED_BUFFER->exit_fn)
 	{
-		char *name;
-		struct object *ob;
+		char* name;
+		struct object* ob;
 		ob = ED_BUFFER->exit_ob;
 		name = ED_BUFFER->exit_fn;
 		free((char*) ED_BUFFER);
@@ -2120,7 +2118,7 @@ static void free_ed_buffer()
 }
 
 void ed_cmd(str)
-	char *str;
+	char* str;
 {
 	int status;
 
@@ -2197,8 +2195,8 @@ void ed_cmd(str)
 
 void save_ed_buffer()
 {
-	struct svalue *stmp;
-	char *fname;
+	struct svalue* stmp;
+	char* fname;
 
 	push_string(P_FNAME, STRING_SHARED);
 	stmp = apply_master_ob("get_ed_buffer_save_file_name", 1);
@@ -2421,7 +2419,8 @@ typing ^D or ^K in the autoindent mode.\n");
 				break;
 			}
 			else
-			{}
+			{
+			}
 			// no break //
 		case 'w':
 		case 'W':

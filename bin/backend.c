@@ -26,12 +26,12 @@ int error_recovery_context_exists = 0;
 int current_time;
 
 static void cycle_hb_list(void);
-extern struct object *command_giver, *current_interactive, *obj_list_destruct;
+extern struct object* command_giver, * current_interactive, * obj_list_destruct;
 extern int num_player, d_flag;
 //extern struct object *previous_ob;
 //, *master_ob;
 
-struct object *current_heart_beat;
+struct object* current_heart_beat;
 
 void call_heart_beat(), catch_alarm();
 void load_first_objects(), prepare_ipc(), shutdowngame(), ed_cmd(char*),
@@ -61,7 +61,7 @@ int comm_time_to_call_heart_beat = 0; /* this is set by interrupt, */
  */
 void clear_state()
 {
-	extern struct object *previous_ob;
+	extern struct object* previous_ob;
 
 	current_object = 0;
 	command_giver = 0;
@@ -73,10 +73,10 @@ void clear_state()
 }
 
 void logon(ob)
-	struct object *ob;
+	struct object* ob;
 {
-	struct svalue *ret;
-	struct object *save = current_object;
+	struct svalue* ret;
+	struct object* save = current_object;
 
 	/*
 	 * current_object must be set here, so that the static "logon" in
@@ -98,9 +98,9 @@ void logon(ob)
  * Beware that 'str' can be modified and extended !
  */
 int parse_command(str, ob)
-	char *str;struct object *ob;
+	char* str;struct object* ob;
 {
-	struct object *save = command_giver;
+	struct object* save = command_giver;
 	int res;
 
 	command_giver = ob;
@@ -215,8 +215,8 @@ static void look_for_objects_to_swap()
 {
 	extern long time_to_swap; /* marion - for invocation parameter */
 	static int next_time;
-	struct object *ob;
-	struct object *next_ob;
+	struct object* ob;
+	struct object* next_ob;
 	jmp_buf save_error_recovery_context;
 	int save_rec_exists;
 
@@ -277,7 +277,7 @@ static void look_for_objects_to_swap()
 				&& (ob->flags & O_WILL_CLEAN_UP))
 		{
 			int save_reset_state = ob->flags & O_RESET_STATE;
-			struct svalue *svp;
+			struct svalue* svp;
 
 			if (d_flag)
 				fprintf(stderr, "clean up %s\n", ob->name);
@@ -330,8 +330,8 @@ static void look_for_objects_to_swap()
  * is shadowed, check the shadowed object if living. There is no need to save
  * the value of the command_giver, as the caller resets it to 0 anyway.
  */
-static struct object *hb_list = 0; /* head */
-static struct object *hb_tail = 0; /* for sane wrap around */
+static struct object* hb_list = 0; /* head */
+static struct object* hb_tail = 0; /* for sane wrap around */
 
 static int num_hb_objs = 0; /* so we know when to stop! */
 static int num_hb_calls = 0; /* stats */
@@ -339,7 +339,7 @@ static float perc_hb_probes = 100.0; /* decaying avge of how many complete */
 
 void call_heart_beat()
 {
-	struct object *ob, *hide_current = current_object;
+	struct object* ob, * hide_current = current_object;
 	int num_done = 0;
 
 	time_to_call_heart_beat = 0; /* interrupt loop if we take too long */
@@ -408,7 +408,7 @@ void call_heart_beat()
  */
 static void cycle_hb_list()
 {
-	struct object *ob;
+	struct object* ob;
 	if (!hb_list)
 		fatal("Cycle heart beat list with empty list!");
 	if (hb_list == hb_tail)
@@ -428,10 +428,10 @@ static void cycle_hb_list()
  */
 
 int set_heart_beat(ob, to)
-	struct object *ob;int to;
+	struct object* ob;int to;
 {
-	struct object *o = hb_list;
-	struct object *oprev = 0;
+	struct object* o = hb_list;
+	struct object* oprev = 0;
 
 	if (ob->flags & O_DESTRUCTED)
 		return 0;
@@ -506,9 +506,9 @@ int heart_beat_status(verbose)
 
 void load_first_objects()
 { /* Old version used when o_flag true /JnA */
-	FILE *f;
+	FILE* f;
 	char buff[1000];
-	char *p;
+	char* p;
 	extern int e_flag;
 #ifndef MSDOS
 	struct tms tms1, tms2;
@@ -578,8 +578,8 @@ void load_first_objects()
 void preload_objects(eflag)
 	int eflag;
 {
-	struct vector *prefiles;
-	struct svalue *ret;
+	struct vector* prefiles;
+	struct svalue* ret;
 	int ix;
 
 	push_number(eflag);
@@ -637,7 +637,7 @@ void catch_alarm()
  */
 void remove_destructed_objects()
 {
-	struct object *ob, *next;
+	struct object* ob, * next;
 	for (ob = obj_list_destruct; ob; ob = next)
 	{
 		next = ob->next_all;
@@ -650,9 +650,9 @@ void remove_destructed_objects()
  * Append string to file. Return 0 for failure, otherwise 1.
  */
 int write_file(file, str)
-	char *file;char *str;
+	char* file;char* str;
 {
-	FILE *f;
+	FILE* f;
 
 #ifdef COMPAT_MODE
 	file = check_file_name(file, 1);
@@ -670,11 +670,11 @@ int write_file(file, str)
 }
 
 char* read_file(file, start, len)
-	char *file;int start, len;
+	char* file;int start, len;
 {
 	struct stat st;
-	FILE *f;
-	char *str, *p, *p2, *end, c;
+	FILE* f;
+	char* str, * p, * p2, * end, c;
 	int size;
 
 	if (len < 0)
@@ -781,11 +781,11 @@ char* read_file(file, start, len)
 }
 
 char* read_bytes(file, start, len)
-	char *file;int start, len;
+	char* file;int start, len;
 {
 	struct stat st;
 
-	char *str, *p;
+	char* str, * p;
 	int size, f;
 //    int lseek();
 
@@ -854,7 +854,7 @@ char* read_bytes(file, start, len)
 }
 
 int write_bytes(file, start, str)
-	char *file, *str;int start;
+	char* file, * str;int start;
 {
 	struct stat st;
 
@@ -906,7 +906,7 @@ int write_bytes(file, start, str)
 }
 
 int file_size(file)
-	char *file;
+	char* file;
 {
 	struct stat st;
 

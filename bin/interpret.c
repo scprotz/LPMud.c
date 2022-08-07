@@ -41,11 +41,11 @@ extern int getpagesize();
 #endif
 #endif
 
-#if defined(__GNUC__) && !defined(lint)
-#define INLINE /* inline */ /* Another time ! */
-#else
-#define INLINE
-#endif
+//#if defined(__GNUC__) && !defined(lint)
+//#define INLINE /* inline */ /* Another time ! */
+//#else
+//#define INLINE
+//#endif
 
 //extern struct object *master_ob;
 
@@ -57,12 +57,12 @@ static int inter_sscanf(int);
 static int strpref(char*, char*);
 //extern int do_rename(char*, char*);
 
-extern struct object *previous_ob;
-extern char *last_verb;
+extern struct object* previous_ob;
+extern char* last_verb;
 extern struct svalue const0, const1;
-struct program *current_prog;
+struct program* current_prog;
 extern int current_time;
-extern struct object *current_heart_beat, *current_interactive;
+extern struct object* current_heart_beat, * current_interactive;
 
 static int tracedepth;
 #define TRACE_CALL 1
@@ -95,7 +95,6 @@ static int tracedepth;
  * loaded separetly. X will then be reloaded again.
  */
 //extern int d_flag;
-
 //extern int current_line
 extern int eval_cost;
 
@@ -105,10 +104,10 @@ extern int eval_cost;
  * will return. That means that control_stack[0] will have almost no
  * interesting values, as it will terminate execution.
  */
-static char *pc; /* Program pointer. */
-static struct svalue *fp; /* Pointer to first argument. */
-static struct svalue *sp; /* Points to value of last push. */
-static short *break_sp; /* Points to address to branch to
+static char* pc; /* Program pointer. */
+static struct svalue* fp; /* Pointer to first argument. */
+static struct svalue* sp; /* Points to value of last push. */
+static short* break_sp; /* Points to address to branch to
  * at next F_BREAK			*/
 static int function_index_offset; /* Needed for inheritance */
 static int variable_index_offset; /* Needed for inheritance */
@@ -117,7 +116,7 @@ static struct svalue start_of_stack[EVALUATOR_STACK_SIZE];
 struct svalue catch_value; /* Used to throw an error to a catch */
 
 static struct control_stack control_stack[MAX_TRACE];
-static struct control_stack *csp; /* Points to last element pushed */
+static struct control_stack* csp; /* Points to last element pushed */
 
 /*
  * May current_object shadow object 'ob' ? We rely heavily on the fact that
@@ -125,11 +124,11 @@ static struct control_stack *csp; /* Points to last element pushed */
  * can be tested simply through pointer comparison.
  */
 int validate_shadowing(ob)
-	struct object *ob;
+	struct object* ob;
 {
 	int i, j;
-	struct program *shadow = current_object->prog, *victim = ob->prog;
-	struct svalue *ret;
+	struct program* shadow = current_object->prog, * victim = ob->prog;
+	struct svalue* ret;
 
 	if (current_object->shadowing)
 		error("shadow: Already shadowing.\n");
@@ -183,9 +182,9 @@ int validate_shadowing(ob)
  * incremented.
  * A destructed object must never be pushed onto the stack.
  */
-INLINE
+
 void push_object(ob)
-	struct object *ob;
+	struct object* ob;
 {
 	sp++;
 	if (sp == &start_of_stack[EVALUATOR_STACK_SIZE])
@@ -198,7 +197,7 @@ void push_object(ob)
 /*
  * Push a number on the value stack.
  */
-INLINE
+
 void push_number(n)
 	int n;
 {
@@ -212,9 +211,9 @@ void push_number(n)
 /*
  * Push a string on the value stack.
  */
-INLINE
+
 void push_string(p, type)
-	char *p;int type;
+	char* p;int type;
 {
 	sp++;
 	if (sp == &start_of_stack[EVALUATOR_STACK_SIZE])
@@ -238,14 +237,14 @@ void push_string(p, type)
 /*
  * Get address to a valid global variable.
  */
-static INLINE struct svalue *find_value(num)
-int num;
+static struct svalue* find_value(num)
+	int num;
 {
 #ifdef DEBUG
 	if (num >= current_object->prog->num_variables)
 	{
-		fatal("Illegal variable access %d(%d). See trace above.\n",
-				num, current_object->prog->num_variables);
+		fatal("Illegal variable access %d(%d). See trace above.\n", num,
+				current_object->prog->num_variables);
 	}
 #endif
 	return &current_object->variables[num];
@@ -256,7 +255,7 @@ int num;
  * itself.
  */
 void free_svalue(v)
-	struct svalue *v;
+	struct svalue* v;
 {
 	switch (v->type)
 	{
@@ -302,8 +301,8 @@ static char *add_slash(str)
  * (as all identifiers are kept in a vector pointed to by the object).
  */
 
-INLINE void assign_svalue_no_free(to, from)
-	struct svalue *to;struct svalue *from;
+void assign_svalue_no_free(to, from)
+	struct svalue* to;struct svalue* from;
 {
 #ifdef DEBUG
 	if (from == 0)
@@ -337,8 +336,8 @@ INLINE void assign_svalue_no_free(to, from)
 	}
 }
 
-INLINE void assign_svalue(dest, v)
-	struct svalue *dest;struct svalue *v;
+void assign_svalue(dest, v)
+	struct svalue* dest;struct svalue* v;
 {
 	/* First deallocate the previous value. */
 	free_svalue(dest);
@@ -346,7 +345,7 @@ INLINE void assign_svalue(dest, v)
 }
 
 void push_svalue(v)
-	struct svalue *v;
+	struct svalue* v;
 {
 	sp++;
 	assign_svalue_no_free(sp, v);
@@ -357,7 +356,7 @@ void push_svalue(v)
  * Don't do this if it is a value that will be used afterwards, as the
  * data may be sent to free(), and destroyed.
  */
-static INLINE void pop_stack()
+static void pop_stack()
 {
 #ifdef DEBUG
 	if (sp < start_of_stack)
@@ -370,9 +369,9 @@ static INLINE void pop_stack()
 /*
  * Compute the address of an array element.
  */
-static INLINE void push_indexed_lvalue()
+static void push_indexed_lvalue()
 {
-	struct svalue *i, *vec, *item;
+	struct svalue* i, * vec, * item;
 	int ind;
 
 	i = sp;
@@ -422,7 +421,7 @@ static int opcount[MAXOPC];
 /*
  * Deallocate 'n' values from the stack.
  */
-INLINE
+
 void pop_n_elems(n)
 	int n;
 {
@@ -440,9 +439,8 @@ void bad_arg(arg, instr)
 	error("Bad argument %d to %s()\n", arg, get_f_name(instr));
 }
 
-INLINE
 static void push_control_stack(funp)
-	struct function *funp;
+	struct function* funp;
 {
 	if (csp == &control_stack[MAX_TRACE - 1])
 		error("Too deep recursion.\n");
@@ -485,8 +483,8 @@ static void pop_control_stack()
  * is incremented. Newly created vectors normally have a reference count
  * initialized to 1.
  */
-INLINE void push_vector(v)
-	struct vector *v;
+void push_vector(v)
+	struct vector* v;
 {
 	v->ref++;
 	sp++;
@@ -497,8 +495,8 @@ INLINE void push_vector(v)
 /*
  * Push a string on the stack that is already malloced.
  */
-static void INLINE push_malloced_string(p)
-	char *p;
+static void push_malloced_string(p)
+	char* p;
 {
 	sp++;
 	sp->type = T_STRING;
@@ -509,9 +507,9 @@ static void INLINE push_malloced_string(p)
 /*
  * Push a string on the stack that is already constant.
  */
-INLINE
+
 void push_constant_string(p)
-	char *p;
+	char* p;
 {
 	sp++;
 	sp->type = T_STRING;
@@ -520,7 +518,7 @@ void push_constant_string(p)
 }
 
 static void do_trace_call(funp)
-	struct function *funp;
+	struct function* funp;
 {
 	do_trace("Call direct ", funp->name, " ");
 	if (TRACEHB)
@@ -546,7 +544,7 @@ static void do_trace_call(funp)
  * local variables, so that the called function is pleased.
  */
 static struct function* setup_new_frame(funp)
-	struct function *funp;
+	struct function* funp;
 {
 	function_index_offset = 0;
 	variable_index_offset = 0;
@@ -608,11 +606,11 @@ void push_pop_error_context(push)
 	{
 		jmp_buf old_error_context;
 		int old_exists_flag;
-		struct control_stack *save_csp;
-		struct object *save_command_giver;
-		struct svalue *save_sp;
-		struct error_context_stack *next;
-	} *ecsp = 0, *p;
+		struct control_stack* save_csp;
+		struct object* save_command_giver;
+		struct svalue* save_sp;
+		struct error_context_stack* next;
+	}* ecsp = 0, * p;
 
 	if (push == 1)
 	{
@@ -685,7 +683,7 @@ void push_pop_error_context(push)
  *   amylaar
  */
 void check_for_destr(v)
-	struct vector *v;
+	struct vector* v;
 {
 	int i;
 
@@ -712,16 +710,16 @@ void check_for_destr(v)
 #ifdef TRACE_CODE
 int previous_instruction[60];
 int stack_size[60];
-char *previous_pc[60];
+char* previous_pc[60];
 static int last;
 #endif
 static void eval_instruction(p)
-	char *p;
+	char* p;
 {
-	struct object *ob;
+	struct object* ob;
 	int i, num_arg;
 	int instruction;
-	struct svalue *expected_stack, *argp;
+	struct svalue* expected_stack, * argp;
 
 	/* Next F_RETURN at this level will return out of eval_instruction() */
 	csp->extern_call = 1;
@@ -829,7 +827,7 @@ static void eval_instruction(p)
 		CASE(F_REGEXP)
 			;
 			{
-				struct vector *v;
+				struct vector* v;
 				v = match_regexp((sp - 1)->u.vec, sp->u.string);
 				pop_n_elems(2);
 				if (v == 0)
@@ -1063,7 +1061,7 @@ static void eval_instruction(p)
 		CASE(F_AGGREGATE)
 			;
 			{
-				struct vector *v;
+				struct vector* v;
 				unsigned short num;
 
 				((char*) &num)[0] = pc[0];
@@ -1089,7 +1087,7 @@ static void eval_instruction(p)
 			;
 			{
 				unsigned short func_index;
-				struct function *funp;
+				struct function* funp;
 
 				((char*) &func_index)[0] = pc[0];
 				((char*) &func_index)[1] = pc[1];
@@ -1159,8 +1157,8 @@ static void eval_instruction(p)
 		CASE(F_READ_FILE)
 			;
 			{
-				char *str;
-				struct svalue *arg = sp - num_arg + 1;
+				char* str;
+				struct svalue* arg = sp - num_arg + 1;
 				int start = 0, len = 0;
 
 				if (num_arg > 1)
@@ -1186,8 +1184,8 @@ static void eval_instruction(p)
 		CASE(F_READ_BYTES)
 			;
 			{
-				char *str;
-				struct svalue *arg = sp - num_arg + 1;
+				char* str;
+				struct svalue* arg = sp - num_arg + 1;
 				int start = 0, len = 0;
 
 				if (num_arg > 1)
@@ -1377,7 +1375,7 @@ static void eval_instruction(p)
 		CASE(F_EXPLODE)
 			;
 			{
-				struct vector *v;
+				struct vector* v;
 				v = explode_string((sp - 1)->u.string, sp->u.string);
 				pop_n_elems(2);
 				if (v)
@@ -1394,8 +1392,8 @@ static void eval_instruction(p)
 		CASE(F_FILTER_ARRAY)
 			;
 			{
-				struct vector *v;
-				struct svalue *arg;
+				struct vector* v;
+				struct svalue* arg;
 
 				arg = sp - num_arg + 1;
 				ob = 0;
@@ -1434,7 +1432,7 @@ static void eval_instruction(p)
 		CASE(F_SET_BIT)
 			;
 			{
-				char *str;
+				char* str;
 				int len, old_len, ind;
 
 				if (sp->u.number > MAX_BITS)
@@ -1463,7 +1461,7 @@ static void eval_instruction(p)
 		CASE(F_CLEAR_BIT)
 			;
 			{
-				char *str;
+				char* str;
 				int len, ind;
 
 				if (sp->u.number > MAX_BITS)
@@ -1604,7 +1602,7 @@ static void eval_instruction(p)
 		CASE(F_IMPLODE)
 			;
 			{
-				char *str;
+				char* str;
 				check_for_destr((sp - 1)->u.vec);
 				str = implode_string((sp - 1)->u.vec, sp->u.string);
 				pop_n_elems(2);
@@ -1625,7 +1623,7 @@ static void eval_instruction(p)
 			;
 			{
 #ifdef COMPAT_MODE
-				struct svalue *arg1;
+				struct svalue* arg1;
 #endif
 
 				if (command_giver == 0 || sp->u.ob->interactive == 0
@@ -1663,7 +1661,7 @@ static void eval_instruction(p)
 			{
 				extern char* query_ip_number(struct object*);
 				extern char* query_ip_name(struct object*);
-				char *tmp;
+				char* tmp;
 
 				if (num_arg == 1 && sp->type != T_OBJECT)
 					error("Bad optional argument to query_ip_number()\n");
@@ -1683,7 +1681,7 @@ static void eval_instruction(p)
 			;
 			{
 				extern char* query_host_name();
-				char *tmp;
+				char* tmp;
 
 				tmp = query_host_name();
 				if (tmp)
@@ -1706,7 +1704,7 @@ static void eval_instruction(p)
 		CASE(F_ALL_INVENTORY)
 			;
 			{
-				struct vector *vec;
+				struct vector* vec;
 				vec = all_inventory(sp->u.ob);
 				pop_stack();
 				if (vec == 0)
@@ -1723,7 +1721,7 @@ static void eval_instruction(p)
 		CASE(F_DEEP_INVENTORY)
 			;
 			{
-				struct vector *vec;
+				struct vector* vec;
 
 				vec = deep_inventory(sp->u.ob, 0);
 				free_svalue(sp);
@@ -1780,7 +1778,7 @@ static void eval_instruction(p)
 				int ot = -1;
 				if (command_giver && command_giver->interactive)
 				{
-					struct svalue *arg;
+					struct svalue* arg;
 					push_constant_string("trace");
 					arg = apply_master_ob("query_player_level", 1);
 					if (arg && (arg->type != T_NUMBER || arg->u.number != 0))
@@ -1796,11 +1794,11 @@ static void eval_instruction(p)
 		CASE(F_TRACEPREFIX)
 			;
 			{
-				char *old = 0;
+				char* old = 0;
 
 				if (command_giver && command_giver->interactive)
 				{
-					struct svalue *arg;
+					struct svalue* arg;
 					push_constant_string("trace");
 					arg = apply_master_ob("query_player_level", 1);
 					if (arg && (arg->type != T_NUMBER || arg->u.number))
@@ -1847,7 +1845,7 @@ static void eval_instruction(p)
 		CASE(F_TRANSFER)
 			;
 			{
-				struct object *dest;
+				struct object* dest;
 
 				if (sp->type == T_STRING)
 				{
@@ -1892,7 +1890,7 @@ static void eval_instruction(p)
 			/*if (inadd==0) checkplus(p);*/
 			if ((sp - 1)->type == T_STRING && sp->type == T_STRING)
 			{
-				char *res;
+				char* res;
 				int l = strlen((sp - 1)->u.string);
 				res = xalloc(l + strlen(sp->u.string) + 1);
 				(void) strcpy(res, (sp - 1)->u.string);
@@ -1902,7 +1900,7 @@ static void eval_instruction(p)
 			}
 			else if ((sp - 1)->type == T_NUMBER && sp->type == T_STRING)
 			{
-				char buff[20], *res;
+				char buff[20], * res;
 				sprintf(buff, "%d", (sp - 1)->u.number);
 				res = xalloc(strlen(sp->u.string) + strlen(buff) + 1);
 				strcpy(res, buff);
@@ -1913,7 +1911,7 @@ static void eval_instruction(p)
 			else if (sp->type == T_NUMBER && (sp - 1)->type == T_STRING)
 			{
 				char buff[20];
-				char *res;
+				char* res;
 				sprintf(buff, "%d", sp->u.number);
 				res = xalloc(strlen((sp - 1)->u.string) + strlen(buff) + 1);
 				strcpy(res, (sp - 1)->u.string);
@@ -1929,7 +1927,7 @@ static void eval_instruction(p)
 			}
 			else if ((sp - 1)->type == T_POINTER && sp->type == T_POINTER)
 			{
-				struct vector *v;
+				struct vector* v;
 				check_for_destr((sp - 1)->u.vec);
 				check_for_destr(sp->u.vec);
 				v = add_array((sp - 1)->u.vec, sp->u.vec);
@@ -1948,7 +1946,7 @@ static void eval_instruction(p)
 			{
 				extern struct vector* subtract_array(struct vector*,
 						struct vector*);
-				struct vector *v;
+				struct vector* v;
 
 				v = sp->u.vec;
 				if (v->ref > 1)
@@ -2255,7 +2253,7 @@ static void eval_instruction(p)
 		CASE(F_CALL_OTHER)
 			;
 			{
-				struct svalue *arg, tmp;
+				struct svalue* arg, tmp;
 
 				arg = sp - num_arg + 1;
 				if (arg[0].type == T_OBJECT)
@@ -2335,8 +2333,8 @@ static void eval_instruction(p)
 			;
 			{
 				int len, from, to;
-				struct svalue *arg;
-				char *res;
+				struct svalue* arg;
+				char* res;
 
 				arg = sp - num_arg + 1;
 				len = strlen(arg[0].u.string);
@@ -2394,7 +2392,7 @@ static void eval_instruction(p)
 					error("Bad type of end interval to [ .. ] range.\n");
 				if (sp[-2].type == T_POINTER)
 				{
-					struct vector *v;
+					struct vector* v;
 
 					v = slice_array(sp[-2].u.vec, sp[-1].u.number,
 							sp[0].u.number);
@@ -2412,7 +2410,7 @@ static void eval_instruction(p)
 				else if (sp[-2].type == T_STRING)
 				{
 					int len, from, to;
-					char *res;
+					char* res;
 
 					len = strlen(sp[-2].u.string);
 					from = sp[-1].u.number;
@@ -2476,7 +2474,7 @@ static void eval_instruction(p)
 		CASE(F_FILE_NAME)
 			;
 			{
-				char *name, *res;
+				char* name, * res;
 
 				/* This function now returns a leading '/', except when -o flag */
 				name = sp->u.ob->name;
@@ -2497,7 +2495,7 @@ static void eval_instruction(p)
 		CASE(F_CALL_OUT)
 			;
 			{
-				struct svalue *arg = sp - num_arg + 1;
+				struct svalue* arg = sp - num_arg + 1;
 
 				if (!(current_object->flags & O_DESTRUCTED))
 					new_call_out(current_object, arg[0].u.string,
@@ -2526,7 +2524,7 @@ static void eval_instruction(p)
 #ifdef F_INHERIT_LIST
 		CASE(F_INHERIT_LIST)
 		{
-			struct vector *vec;
+			struct vector* vec;
 			extern struct vector* inherit_list(struct object*);
 
 			vec = inherit_list(sp->u.ob);
@@ -2542,7 +2540,7 @@ static void eval_instruction(p)
 		CASE(F_MEMBER_ARRAY)
 			;
 			{
-				struct vector *v;
+				struct vector* v;
 
 				v = sp->u.vec;
 				check_for_destr(v);
@@ -2584,7 +2582,7 @@ static void eval_instruction(p)
 		CASE(F_MOVE_OBJECT)
 			;
 			{
-				struct object *o1, *o2;
+				struct object* o1, * o2;
 
 				if ((sp - 1)->type == T_OBJECT)
 					o1 = (sp - 1)->u.ob;
@@ -2609,7 +2607,7 @@ static void eval_instruction(p)
 		CASE(F_FUNCTION_EXISTS)
 			;
 			{
-				char *str, *res;
+				char* str, * res;
 
 				str = function_exists((sp - 1)->u.string, sp->u.ob);
 				pop_n_elems(2);
@@ -2684,7 +2682,7 @@ static void eval_instruction(p)
 		CASE(F_ADD_ACTION)
 			;
 			{
-				struct svalue *arg = sp - num_arg + 1;
+				struct svalue* arg = sp - num_arg + 1;
 				if (num_arg == 3)
 				{
 					if (arg[2].type != T_NUMBER)
@@ -2710,7 +2708,7 @@ static void eval_instruction(p)
 		CASE(F_ALLOCATE)
 			;
 			{
-				struct vector *v;
+				struct vector* v;
 
 				v = allocate_array(sp->u.number); /* Will have ref count == 1 */
 				pop_stack();
@@ -2722,8 +2720,8 @@ static void eval_instruction(p)
 			;
 			if (num_arg == 0)
 			{
-				struct svalue *arg;
-				char *err_file;
+				struct svalue* arg;
+				char* err_file;
 
 				if (command_giver == 0 || command_giver->interactive == 0)
 				{
@@ -2763,8 +2761,8 @@ static void eval_instruction(p)
 			;
 			{
 				char salt[2];
-				char *res;
-				char *choise =
+				char* res;
+				char* choise =
 						"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
 
 				if (sp->type == T_STRING && strlen(sp->u.string) >= 2)
@@ -2790,8 +2788,8 @@ static void eval_instruction(p)
 		CASE(F_CREATE_WIZARD)
 			;
 			{
-				char *str;
-				struct svalue *arg = sp - num_arg + 1;
+				char* str;
+				struct svalue* arg = sp - num_arg + 1;
 				str = create_wizard(arg[0].u.string,
 						num_arg == 2 ? arg[1].u.string : 0);
 				pop_n_elems(num_arg);
@@ -2849,7 +2847,7 @@ static void eval_instruction(p)
 					{
 						if (sp->u.vec->ref > 1)
 						{
-							struct vector *vtmpp = slice_array(sp->u.vec, 0,
+							struct vector* vtmpp = slice_array(sp->u.vec, 0,
 									sp->u.vec->size - 1);
 							say(sp - 1, vtmpp);
 							free_vector(vtmpp);
@@ -2875,8 +2873,8 @@ static void eval_instruction(p)
 			;
 			{
 				extern struct vector null_vector;
-				struct svalue *arg = sp - num_arg + 1;
-				struct vector *avoid;
+				struct svalue* arg = sp - num_arg + 1;
+				struct vector* avoid;
 
 				if (arg[0].type == T_OBJECT)
 					ob = arg[0].u.ob;
@@ -2894,7 +2892,7 @@ static void eval_instruction(p)
 				else
 				{
 					extern struct vector* order_alist(struct vector*);
-					struct vector *vtmpp;
+					struct vector* vtmpp;
 					static struct vector vtmp =
 					{ 1, 1,
 #ifdef DEBUG
@@ -2946,7 +2944,7 @@ static void eval_instruction(p)
 				extern char* findstring(char*);
 				unsigned short offset, break_adr;
 				int d, s, r;
-				char *l, *end_tab;
+				char* l, * end_tab;
 				static short off_tab[] =
 						{ 0 * 6, 1 * 6, 3 * 6, 7 * 6, 15 * 6, 31 * 6, 63 * 6,
 								127 * 6, 255 * 6, 511 * 6, 1023 * 6, 2047 * 6,
@@ -3202,7 +3200,7 @@ static void eval_instruction(p)
 		CASE(F_LOWER_CASE)
 			;
 			{
-				char *str = string_copy(sp->u.string);
+				char* str = string_copy(sp->u.string);
 				for (i = strlen(str) - 1; i >= 0; i--)
 					if (isalpha(str[i]))
 						str[i] |= 'a' - 'A';
@@ -3219,7 +3217,7 @@ static void eval_instruction(p)
 			;
 			if (islower(sp->u.string[0]))
 			{
-				char *str;
+				char* str;
 
 				str = string_copy(sp->u.string);
 				str[0] += 'A' - 'a';
@@ -3233,7 +3231,7 @@ static void eval_instruction(p)
 				extern char
 				* process_string(char*);
 
-				char *str;
+				char* str;
 
 				str = process_string(sp->u.string);
 				if (str != sp->u.string)
@@ -3246,7 +3244,7 @@ static void eval_instruction(p)
 		CASE(F_COMMAND)
 			;
 			{
-				struct svalue *arg = sp - num_arg + 1;
+				struct svalue* arg = sp - num_arg + 1;
 
 				if (num_arg == 1)
 					i = command_for_object(arg[0].u.string, 0);
@@ -3263,7 +3261,7 @@ static void eval_instruction(p)
 		CASE(F_GET_DIR)
 			;
 			{
-				struct vector *v = get_dir(sp->u.string);
+				struct vector* v = get_dir(sp->u.string);
 				pop_stack();
 				if (v)
 				{
@@ -3283,7 +3281,7 @@ static void eval_instruction(p)
 		CASE(F_CAT)
 			;
 			{
-				struct svalue *arg = sp - num_arg + 1;
+				struct svalue* arg = sp - num_arg + 1;
 				int start = 0, len = 0;
 
 				if (num_arg > 1)
@@ -3302,7 +3300,7 @@ static void eval_instruction(p)
 		CASE(F_MKDIR)
 			;
 			{
-				char *path;
+				char* path;
 
 #ifdef COMPAT_MODE
 				path = check_file_name(sp->u.string, 1);
@@ -3319,7 +3317,7 @@ static void eval_instruction(p)
 		CASE(F_RMDIR)
 			;
 			{
-				char *path;
+				char* path;
 
 #ifdef COMPAT_MODE	
 				path = check_file_name(sp->u.string, 1);
@@ -3336,7 +3334,7 @@ static void eval_instruction(p)
 		CASE(F_INPUT_TO)
 			;
 			{
-				struct svalue *arg = sp - num_arg + 1;
+				struct svalue* arg = sp - num_arg + 1;
 				int flag = 1;
 
 				if ((num_arg == 1)
@@ -3354,7 +3352,7 @@ static void eval_instruction(p)
 		CASE(F_PARSE_COMMAND)
 			;
 			{
-				struct svalue *arg;
+				struct svalue* arg;
 
 				num_arg = EXTRACT_UCHAR(pc);
 				pc++;
@@ -3395,7 +3393,7 @@ static void eval_instruction(p)
 		CASE(F_PRESENT)
 			;
 			{
-				struct svalue *arg = sp - num_arg + 1;
+				struct svalue* arg = sp - num_arg + 1;
 				ob = object_present(arg, num_arg == 1 ? 0 : arg[1].u.ob);
 				pop_n_elems(num_arg);
 				if (ob)
@@ -3408,7 +3406,7 @@ static void eval_instruction(p)
 		CASE(F_SET_LIGHT)
 			;
 			{
-				struct object *o1;
+				struct object* o1;
 
 				add_light(current_object, sp->u.number);
 				o1 = current_object;
@@ -3448,7 +3446,7 @@ static void eval_instruction(p)
 		CASE(F_CTIME)
 			;
 			{
-				char *cp;
+				char* cp;
 				cp = string_copy(time_string(sp->u.number));
 				pop_stack();
 				push_malloced_string(cp);
@@ -3467,7 +3465,7 @@ static void eval_instruction(p)
 			{
 				case T_STRING:
 				{
-					char *new_str;
+					char* new_str;
 					if (sp->type == T_STRING)
 					{
 						int l = strlen(argp->u.string);
@@ -3513,7 +3511,7 @@ static void eval_instruction(p)
 					}
 					else
 					{
-						struct vector *v;
+						struct vector* v;
 						check_for_destr(argp->u.vec);
 						check_for_destr(sp->u.vec);
 						v = add_array(argp->u.vec, sp->u.vec);
@@ -3544,7 +3542,7 @@ static void eval_instruction(p)
 				{
 					struct vector* subtract_array(struct vector*,
 							struct vector*);
-					struct vector *v;
+					struct vector* v;
 
 					if (sp->type != T_POINTER)
 						error("Bad right type to -=");
@@ -3736,7 +3734,7 @@ static void eval_instruction(p)
 		CASE(F_CINDENT)
 			;
 			{
-				char *path;
+				char* path;
 
 #ifdef COMPAT_MODE
 				path = check_file_name(sp->u.string, 1);
@@ -3761,7 +3759,7 @@ static void eval_instruction(p)
 		CASE(F_DESCRIBE)
 			;
 			{
-				char *str;
+				char* str;
 				int live;
 
 				if (num_arg < 3)
@@ -3787,7 +3785,7 @@ static void eval_instruction(p)
 				extern struct vector
 				* make_unique(struct vector *arr, char *func,
 						struct svalue *skipnum);
-				struct vector *res;
+				struct vector* res;
 
 				if (num_arg < 3)
 				{
@@ -3829,8 +3827,8 @@ static void eval_instruction(p)
 		CASE(F_MAP_ARRAY)
 			;
 			{
-				struct vector *res;
-				struct svalue *arg;
+				struct vector* res;
+				struct svalue* arg;
 
 				arg = sp - num_arg + 1;
 				ob = 0;
@@ -3868,8 +3866,8 @@ static void eval_instruction(p)
 			{
 				extern struct vector* sort_array(struct vector*, char*,
 						struct object*);
-				struct vector *res;
-				struct svalue *arg;
+				struct vector* res;
+				struct svalue* arg;
 
 				arg = sp - 2;
 				ob = 0;
@@ -3908,8 +3906,8 @@ static void eval_instruction(p)
 			;
 			{
 				extern struct vector* order_alist(struct vector*);
-				struct svalue *args;
-				struct vector *list;
+				struct svalue* args;
+				struct vector* list;
 				int listsize, keynum;
 
 				if (num_arg == 1&& sp->u.vec->size
@@ -3954,9 +3952,9 @@ static void eval_instruction(p)
 			 */
 			extern struct svalue* insert_alist(struct svalue *key,
 					struct svalue *key_data, struct vector *list);
-			struct vector *list;
+			struct vector* list;
 			int listsize, keynum;
-			struct svalue *key, *key_data, *ret;
+			struct svalue* key, * key_data, * ret;
 			static struct vector tempvec =
 			{ 1, 1, };
 
@@ -4014,9 +4012,9 @@ static void eval_instruction(p)
 				 order_alist to retain the alist property.
 				 */
 				int assoc(struct svalue *key, struct vector *keys);
-				struct svalue *args = sp - num_arg + 1;
-				struct vector *keys, *data;
-				struct svalue *fail_val;
+				struct svalue* args = sp - num_arg + 1;
+				struct vector* keys, * data;
+				struct svalue* fail_val;
 				int ix;
 
 				if (!args[1].u.vec->size
@@ -4091,7 +4089,7 @@ static void eval_instruction(p)
 			{
 				extern struct vector* intersect_alist(struct vector*,
 						struct vector*);
-				struct vector *tmp = intersect_alist((sp - 1)->u.vec,
+				struct vector* tmp = intersect_alist((sp - 1)->u.vec,
 						sp->u.vec);
 				pop_stack();
 				free_vector(sp->u.vec);
@@ -4102,7 +4100,7 @@ static void eval_instruction(p)
 		CASE(F_DEBUG_INFO)
 			;
 			{
-				struct svalue *arg = sp - num_arg + 1;
+				struct svalue* arg = sp - num_arg + 1;
 				struct svalue res;
 
 				switch (arg[0].u.number)
@@ -4110,7 +4108,7 @@ static void eval_instruction(p)
 					case 0:
 					{
 						int flags;
-						struct object *obj2;
+						struct object* obj2;
 
 						if (num_arg != 2)
 							error("bad number of arguments to debug_info");
@@ -4250,23 +4248,23 @@ static void eval_instruction(p)
 char debug_apply_fun[30]; /* For debugging */
 
 static int apply_low(fun, ob, num_arg)
-	char *fun;struct object *ob;int num_arg;
+	char* fun;struct object* ob;int num_arg;
 {
 	static int cache_id[0x40] =
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	static char *cache_name[0x40];
-	static struct function *cache_pr[0x40];
-	static struct function *cache_pr_inherited[0x40];
-	static struct program *cache_progp[0x40];
+	static char* cache_name[0x40];
+	static struct function* cache_pr[0x40];
+	static struct function* cache_pr_inherited[0x40];
+	static struct program* cache_progp[0x40];
 	static int cache_function_index_offset[0x40];
 	static int cache_variable_index_offset[0x40];
 
-	struct function *pr;
-	struct program *progp;
+	struct function* pr;
+	struct program* progp;
 	extern int num_error;
-	struct control_stack *save_csp;
+	struct control_stack* save_csp;
 	int ix;
 
 	ob->time_of_ref = current_time; /* Used by the swapper */
@@ -4446,10 +4444,10 @@ static int apply_low(fun, ob, num_arg)
  */
 
 static struct svalue* sapply(fun, ob, num_arg)
-	char *fun;struct object *ob;int num_arg;
+	char* fun;struct object* ob;int num_arg;
 {
 #ifdef DEBUG
-	struct svalue *expected_sp;
+	struct svalue* expected_sp;
 #endif
 	static struct svalue ret_value =
 	{ T_NUMBER };
@@ -4473,7 +4471,7 @@ static struct svalue* sapply(fun, ob, num_arg)
 }
 
 struct svalue* apply(fun, ob, num_arg)
-	char *fun;struct object *ob;int num_arg;
+	char* fun;struct object* ob;int num_arg;
 {
 	tracedepth = 0;
 	return sapply(fun, ob, num_arg);
@@ -4485,9 +4483,9 @@ struct svalue* apply(fun, ob, num_arg)
  * or 0 otherwise.
  */
 char* function_exists(fun, ob)
-	char *fun;struct object *ob;
+	char* fun;struct object* ob;
 {
-	struct function *pr;
+	struct function* pr;
 
 #ifdef DEBUG
 	if (ob->flags & O_DESTRUCTED)
@@ -4498,7 +4496,7 @@ char* function_exists(fun, ob)
 	pr = ob->prog->functions;
 	for (; pr < ob->prog->functions + ob->prog->num_functions; pr++)
 	{
-		struct program *progp;
+		struct program* progp;
 
 		if (pr->name[0] != fun[0] || strcmp(pr->name, fun) != 0)
 			continue;
@@ -4524,7 +4522,7 @@ char* function_exists(fun, ob)
  */
 
 void call_function(progp, pr)
-	struct program *progp;struct function *pr;
+	struct program* progp;struct function* pr;
 {
 	if (pr->flags & NAME_UNDEFINED)
 		return;
@@ -4547,7 +4545,7 @@ void call_function(progp, pr)
  * low priority.
  */
 static int get_line_number(p, progp)
-	char *p;struct program *progp;
+	char* p;struct program* progp;
 {
 	int offset;
 	int i;
@@ -4570,8 +4568,8 @@ static int get_line_number(p, progp)
 char* dump_trace(how)
 	int how;
 {
-	struct control_stack *p;
-	char *ret = 0;
+	struct control_stack* p;
+	char* ret = 0;
 #ifdef DEBUG
 	int last_instructions(void);
 #endif
@@ -4618,7 +4616,7 @@ int get_line_number_if_any()
 }
 
 static char* find_percent(str)
-	char *str;
+	char* str;
 {
 	while (1)
 	{
@@ -4634,11 +4632,11 @@ static char* find_percent(str)
 static int inter_sscanf(num_arg)
 	int num_arg;
 {
-	char *fmt; /* Format description */
-	char *in_string; /* The string to be parsed. */
+	char* fmt; /* Format description */
+	char* in_string; /* The string to be parsed. */
 	int number_of_matches;
-	char *cp;
-	struct svalue *arg = sp - num_arg + 1;
+	char* cp;
+	struct svalue* arg = sp - num_arg + 1;
 
 	/*
 	 * First get the string to be parsed.
@@ -4706,7 +4704,7 @@ static int inter_sscanf(num_arg)
 		 */
 		if (type == T_NUMBER)
 		{
-			char *tmp = in_string;
+			char* tmp = in_string;
 			int tmp_num;
 
 			tmp_num = (int) strtol(in_string, &in_string, 10);
@@ -4752,7 +4750,7 @@ static int inter_sscanf(num_arg)
 		{
 			if (strncmp(in_string + i, fmt, cp - fmt) == 0)
 			{
-				char *match;
+				char* match;
 				/*
 				 * Found a match !
 				 */
@@ -4809,7 +4807,7 @@ static char* get_arg(a, b)
 	int a, b;
 {
 	static char buff[10];
-	char *from, *to;
+	char* from, * to;
 
 	from = previous_pc[a];
 	to = previous_pc[b];
@@ -4864,7 +4862,7 @@ int last_instructions()
 #ifdef DEBUG
 
 static void count_inherits(progp, search_prog)
-	struct program *progp, *search_prog;
+	struct program* progp, * search_prog;
 {
 	int i;
 
@@ -4881,9 +4879,9 @@ static void count_inherits(progp, search_prog)
 }
 
 static void count_ref_in_vector(svp, num)
-	struct svalue *svp;int num;
+	struct svalue* svp;int num;
 {
-	struct svalue *p;
+	struct svalue* p;
 
 	for (p = svp; p < svp + num; p++)
 	{
@@ -4904,9 +4902,9 @@ static void count_ref_in_vector(svp, num)
  * Clear the extra debug ref count for vectors
  */
 void clear_vector_refs(svp, num)
-	struct svalue *svp;int num;
+	struct svalue* svp;int num;
 {
-	struct svalue *p;
+	struct svalue* p;
 
 	for (p = svp; p < svp + num; p++)
 	{
@@ -4926,10 +4924,10 @@ void clear_vector_refs(svp, num)
  * only be used for debugging.
  */
 void check_a_lot_ref_counts(search_prog)
-	struct program *search_prog;
+	struct program* search_prog;
 {
-	extern struct object *master_ob;
-	struct object *ob;
+	extern struct object* master_ob;
+	struct object* ob;
 
 	/*
 	 * Pass 1: clear the ref counts.
@@ -4994,27 +4992,27 @@ void check_a_lot_ref_counts(search_prog)
 
 /* Generate a debug message to the player */
 static void do_trace(msg, fname, post)
-	char *msg, *fname, *post;
+	char* msg, * fname, * post;
 {
 	char buf[10000];
-	char *objname;
+	char* objname;
 
 	if (!TRACEHB)
 		return;
 	objname =
-			TRACETST(TRACE_OBJNAME) ?
-					(current_object && current_object->name ?
-							current_object->name : "??") :
-					"";
+	TRACETST(TRACE_OBJNAME) ?
+			(current_object && current_object->name ?
+					current_object->name : "??") :
+			"";
 	sprintf(buf, "*** %d %*s %s %s %s%s", tracedepth, tracedepth, "", msg,
 			objname, fname, post);
 	add_message(buf);
 }
 
 struct svalue* apply_master_ob(fun, num_arg)
-	char *fun;int num_arg;
+	char* fun;int num_arg;
 {
-	extern struct object *master_ob;
+	extern struct object* master_ob;
 
 	assert_master_ob_loaded();
 	/*
@@ -5025,7 +5023,7 @@ struct svalue* apply_master_ob(fun, num_arg)
 
 void assert_master_ob_loaded()
 {
-	extern struct object *master_ob;
+	extern struct object* master_ob;
 	static int inside = 0;
 #ifndef COMPAT_MODE
     struct svalue *ret;
@@ -5082,9 +5080,9 @@ void assert_master_ob_loaded()
  * from the stack.
  */
 void remove_object_from_stack(ob)
-	struct object *ob;
+	struct object* ob;
 {
-	struct svalue *svp;
+	struct svalue* svp;
 
 	for (svp = start_of_stack; svp <= sp; svp++)
 	{
@@ -5099,7 +5097,7 @@ void remove_object_from_stack(ob)
 }
 
 static int strpref(p, s)
-	char *p, *s;
+	char* p, * s;
 {
 	while (*p)
 		if (*p++ != *s++)

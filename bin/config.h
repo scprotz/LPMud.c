@@ -56,7 +56,7 @@
  * If your compiler has the type 'unsigned char', then the cast-version
  * is best. If you do not know, use the simple version, and the game will
  * immediately terminate with a message if bad.
-#define EXTRACT_UCHAR(p) (*p < 0 ? *p + 0x100 : *p)
+ #define EXTRACT_UCHAR(p) (*p < 0 ? *p + 0x100 : *p)
  */
 #define EXTRACT_UCHAR(p) (*(unsigned char *)p)
 
@@ -158,7 +158,7 @@
  */
 
 #define USE_TIOCGETP		/* BSD */
-/* #define USE_TCGETA */ 	/* SYSV */
+/* #define USE_TCGETA *//* SYSV */
 
 /* Maximum number of evaluated nodes/loop.
  * If this is exceeded, current function is halted.
@@ -262,7 +262,7 @@
  */
 
 #define MAX_BYTE_TRANSFER 10000
-   
+
 /************************************************************************/
 /*	END OF CONFIG -- DO NOT ALTER ANYTHING BELOW THIS LINE		*/
 /************************************************************************/

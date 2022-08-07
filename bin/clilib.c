@@ -1,12 +1,12 @@
 /*
-	Copyright (C) 1991, Marcus J. Ranum. All rights reserved.
-*/
+ Copyright (C) 1991, Marcus J. Ranum. All rights reserved.
+ */
 
 /*
-code to interface client MUDs with rwho server
+ code to interface client MUDs with rwho server
 
-this is a standalone library.
-*/
+ this is a standalone library.
+ */
 
 #include	<stdio.h>
 #include	<ctype.h>

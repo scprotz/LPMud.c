@@ -66,9 +66,9 @@ void remove_interactive(), add_ref();
 
 extern void debug_message(), fatal(), free_sentence();
 
-struct interactive *all_players[MAX_PLAYERS];
+struct interactive* all_players[MAX_PLAYERS];
 
-extern int errno;
+//extern int errno;
 
 void new_player();
 
@@ -78,14 +78,14 @@ fd_set readfds;
 int nfds = 0;
 int num_player;
 
-FILE *f_ip_demon = NULL, *f_ip_demon_wr;
+FILE* f_ip_demon = NULL, * f_ip_demon_wr;
 
 #ifdef ACCESS_RESTRICTED
 extern void* allow_host_access();
 extern void release_host_access();
 #endif
 
-static struct object *first_player_for_flush = (struct object*) NULL;
+static struct object* first_player_for_flush = (struct object*) NULL;
 
 /*
  * Interprocess communication interface to the backend.
@@ -104,7 +104,7 @@ void prepare_ipc()
 {
 #ifndef MSDOS
 	struct sockaddr_in sin;
-	struct hostent *hp;
+	struct hostent* hp;
 	int tmp;
 	char host_name[100];
 #ifdef MUDWHO
@@ -123,7 +123,7 @@ void prepare_ipc()
 		exit(1);
 	}
 	memset((char*) &sin, '\0', sizeof sin);
-	memcpy((char*) &sin.sin_addr, hp->h_addr, hp->h_length);
+	memcpy((char*) &sin.sin_addr, hp->h_addr_list[0], hp->h_length);
 	sin.sin_port = htons((u_short) port_number);
 	sin.sin_family = hp->h_addrtype;
 	sin.sin_addr.s_addr = INADDR_ANY;
@@ -203,11 +203,11 @@ void ipc_remove()
  */
 /*VARARGS1*/
 void add_message(fmt, a1, a2, a3, a4, a5, a6, a7, a8, a9)
-	char *fmt;int a1, a2, a3, a4, a5, a6, a7, a8, a9;
+	char* fmt;int a1, a2, a3, a4, a5, a6, a7, a8, a9;
 {
 	char buff[10000]; /* Kludgy! Hope this is enough ! */
 	char buff2[MAX_SOCKET_PACKET_SIZE + 1];
-	struct interactive *ip;
+	struct interactive* ip;
 	int n, chunk, length;
 	int from, to;
 	int min_length;
@@ -250,7 +250,7 @@ void add_message(fmt, a1, a2, a3, a4, a5, a6, a7, a8, a9)
 			return;
 		if (ip->snoop_by)
 		{
-			struct object *save = command_giver;
+			struct object* save = command_giver;
 			command_giver = ip->snoop_by->ob;
 			add_message("%%%s", buff + old_message_length);
 			command_giver = save;
@@ -386,7 +386,7 @@ void add_message(fmt, a1, a2, a3, a4, a5, a6, a7, a8, a9)
 }
 
 void remove_flush_entry(ip)
-	struct interactive *ip;
+	struct interactive* ip;
 {
 
 	ip->message_length = 0;
@@ -408,8 +408,8 @@ void remove_flush_entry(ip)
 
 void flush_all_player_mess()
 {
-	struct object *p, *np;
-	struct object *save = command_giver;
+	struct object* p, * np;
+	struct object* save = command_giver;
 
 	for (p = first_player_for_flush; p; p = np)
 	{
@@ -428,10 +428,10 @@ void flush_all_player_mess()
  * multiple zeroes only.
  */
 static int copy_chars(from, to, n)
-	char *from, *to;int n;
+	char* from, * to;int n;
 {
 	int i;
-	char *start = to;
+	char* start = to;
 	for (i = 0; i < n; i++)
 	{
 		if (from[i] == '\r')
@@ -468,11 +468,11 @@ int twait = 0; /* wait time for select() */
 extern int time_to_call_heart_beat, comm_time_to_call_heart_beat;
 
 int get_message(buff, size)
-	char *buff;int size;
+	char* buff;int size;
 {
 	int i, res;
-	struct interactive *ip = 0;
-	char *p;
+	struct interactive* ip = 0;
+	char* p;
 
 	/*
 	 * Stay in this loop until we have a message from a player.
@@ -547,7 +547,7 @@ int get_message(buff, size)
 		{ /* waiting packets */
 			if (f_ip_demon != NULL && FD_ISSET(fileno(f_ip_demon), &readfds))
 			{
-				char buf[200], *pp, *q;
+				char buf[200], * pp, * q;
 				long laddr;
 				if (fgets(buf, sizeof buf, f_ip_demon))
 				{
@@ -758,9 +758,9 @@ int get_message(buff, size)
  */
 
 char* first_cmd_in_buf(ip)
-	struct interactive *ip;
+	struct interactive* ip;
 {
-	char *p, *q;
+	char* p, * q;
 
 	p = ip->text_start + ip->text;
 
@@ -808,9 +808,9 @@ char* first_cmd_in_buf(ip)
  */
 
 void next_cmd_in_buf(ip)
-	struct interactive *ip;
+	struct interactive* ip;
 {
-	char *p = ip->text + ip->text_start;
+	char* p = ip->text + ip->text_start;
 	while (*p && p < ip->text + ip->text_end)
 		p++;
 	/* skip past any nulls at the end */
@@ -829,9 +829,9 @@ void next_cmd_in_buf(ip)
  * Remove an interactive player immediately.
  */
 void remove_interactive(ob)
-	struct object *ob;
+	struct object* ob;
 {
-	struct object *save = command_giver;
+	struct object* save = command_giver;
 	int i;
 
 	for (i = 0; i < MAX_PLAYERS; i++)
@@ -1013,14 +1013,14 @@ struct object* get_interactive_object(i)
 }
 
 void new_player(new_socket, addr, len)
-	int new_socket;struct sockaddr_in *addr;int len;
+	int new_socket;struct sockaddr_in* addr;int len;
 {
 	int i;
-	char *p;
+	char* p;
 
 #ifndef MSDOS
 #ifdef ACCESS_RESTRICTED
-	void *class;
+	void* class;
 
 	if (!(class = allow_host_access(new_socket, new_socket)))
 		return;
@@ -1033,9 +1033,9 @@ void new_player(new_socket, addr, len)
 		debug_message("New player at socket %d.\n", new_socket);
 	for (i = 0; i < MAX_PLAYERS; i++)
 	{
-		struct object *ob;
-		struct svalue *ret;
-		extern struct object *master_ob;
+		struct object* ob;
+		struct svalue* ret;
+		extern struct object* master_ob;
 
 		if (all_players[i] != 0)
 			continue;
@@ -1124,10 +1124,10 @@ void new_player(new_socket, addr, len)
 }
 
 int call_function_interactive(i, str)
-	struct interactive *i;char *str;
+	struct interactive* i;char* str;
 {
-	char *function;
-	struct object *ob;
+	char* function;
+	struct object* ob;
 
 	if (!i->input_to)
 		return 0;
@@ -1165,9 +1165,9 @@ int call_function_interactive(i, str)
 }
 
 int set_call(ob, sent, noecho)
-	struct object *ob;struct sentence *sent;int noecho;
+	struct object* ob;struct sentence* sent;int noecho;
 {
-	struct object *save = command_giver;
+	struct object* save = command_giver;
 	if (ob == 0 || sent == 0)
 		return 0;
 	if (ob->interactive == 0 || ob->interactive->input_to)
@@ -1182,9 +1182,9 @@ int set_call(ob, sent, noecho)
 }
 
 void show_info_about(str, room, i)
-	char *str, *room;struct interactive *i;
+	char* str, * room;struct interactive* i;
 {
-	struct hostent *hp = 0;
+	struct hostent* hp = 0;
 
 #if 0
     hp = gethostbyaddr(&i->addr.sin_addr.s_addr, 4, AF_INET);
@@ -1207,7 +1207,7 @@ void remove_all_players()
 }
 
 void set_prompt(str)
-	char *str;
+	char* str;
 {
 	command_giver->interactive->prompt = str;
 }
@@ -1234,9 +1234,9 @@ void print_prompt()
  * snooping.
  */
 void set_snoop(me, you)
-	struct object *me, *you;
+	struct object* me, * you;
 {
-	struct interactive *on = 0, *by = 0, *tmp;
+	struct interactive* on = 0, * by = 0, * tmp;
 	int i;
 
 	if (me->flags & O_DESTRUCTED)
@@ -1307,11 +1307,11 @@ void set_snoop(me, you)
  * 0 or 1 depending on success.
  */
 int new_set_snoop(me, you)
-	struct object *me, *you;
+	struct object* me, * you;
 {
-	struct interactive *on = 0, *by = 0, *tmp;
+	struct interactive* on = 0, * by = 0, * tmp;
 	int i;
-	struct svalue *ret;
+	struct svalue* ret;
 
 	/* Stop if people managed to quit before we got this far */
 	if (me->flags & O_DESTRUCTED)
@@ -1394,11 +1394,11 @@ int new_set_snoop(me, you)
 #define	TS_DONT		5
 
 void telnet_neg(to, from)
-	char *to, *from;
+	char* to, * from;
 {
 	int state = TS_DATA;
 	int ch;
-	char *first = to;
+	char* first = to;
 
 	while (1)
 	{
@@ -1487,12 +1487,12 @@ void telnet_neg(to, from)
 static struct ipentry
 {
 	long addr;
-	char *name;
+	char* name;
 } iptable[IPSIZE];
 static int ipcur;
 
 char* query_ip_name(ob)
-	struct object *ob;
+	struct object* ob;
 {
 	int i;
 
@@ -1510,7 +1510,7 @@ char* query_ip_name(ob)
 }
 
 static void add_ip_entry(addr, name)
-	long addr;char *name;
+	long addr;char* name;
 {
 	int i;
 
@@ -1527,7 +1527,7 @@ static void add_ip_entry(addr, name)
 }
 
 char* query_ip_number(ob)
-	struct object *ob;
+	struct object* ob;
 {
 	if (ob == 0)
 		ob = command_giver;
@@ -1572,7 +1572,7 @@ char* query_host_name()
 }
 
 struct object* query_snoop(ob)
-	struct object *ob;
+	struct object* ob;
 {
 	if (ob->interactive->snoop_by == 0)
 		return 0;
@@ -1580,7 +1580,7 @@ struct object* query_snoop(ob)
 }
 
 int query_idle(ob)
-	struct object *ob;
+	struct object* ob;
 {
 	if (!ob->interactive)
 		error("query_idle() of non-interactive object.\n");
@@ -1589,7 +1589,7 @@ int query_idle(ob)
 
 void notify_no_command()
 {
-	char *p, *m;
+	char* p, * m;
 
 	if (!command_giver->interactive)
 		return;
@@ -1622,7 +1622,7 @@ void clear_notify()
 }
 
 void set_notify_fail_message(str)
-	char *str;
+	char* str;
 {
 	if (!command_giver || !command_giver->interactive)
 		return;
@@ -1633,7 +1633,7 @@ void set_notify_fail_message(str)
 }
 
 int replace_interactive(ob, obfrom, /*IGN*/name)
-	struct object *ob;struct object *obfrom;char *name;
+	struct object* ob;struct object* obfrom;char* name;
 {
 	/* marion
 	 * i see no reason why to restrict this, besides - the length
@@ -1642,7 +1642,7 @@ int replace_interactive(ob, obfrom, /*IGN*/name)
 	 *      Otherwise I can write my own player object without any security
 	 *      at all!
 	 */
-	struct svalue *v;
+	struct svalue* v;
 
 	push_string(name, STRING_CONSTANT);
 	v = apply_master_ob("valid_exec", 1);
@@ -1659,7 +1659,7 @@ int replace_interactive(ob, obfrom, /*IGN*/name)
 		error("Bad argument2 to exec()\n");
 	if (obfrom->interactive->message_length)
 	{
-		struct object *save;
+		struct object* save;
 		save = command_giver;
 		command_giver = obfrom;
 		add_message(MESSAGE_FLUSH);

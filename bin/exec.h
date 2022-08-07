@@ -42,77 +42,81 @@
 #define NAME_HIDDEN		0x8	/* Not visible for inheritance */
 #define NAME_PROTOTYPE		0x10	/* Defined by a prototype only */
 
-struct function {
-    char *name;
-    unsigned short offset;	/* Address of function,
-				 * or inherit table index when inherited. */
-    unsigned short flags;	/* NAME_ . See above. */
-    unsigned short num_local;	/* Number of local variables */
-    unsigned short num_arg;	/* Number of arguments needed.
-				   -1 arguments means function not defined
-				   in this object. Probably inherited */
-    unsigned short function_index_offset;
-    /* Used so that it is possible to quickly find this function
-     * in the inherited program.
-     */
-    unsigned short type;	/* Return type of function. See below. */
+struct function
+{
+	char* name;
+	unsigned short offset; /* Address of function,
+	 * or inherit table index when inherited. */
+	unsigned short flags; /* NAME_ . See above. */
+	unsigned short num_local; /* Number of local variables */
+	unsigned short num_arg; /* Number of arguments needed.
+	 -1 arguments means function not defined
+	 in this object. Probably inherited */
+	unsigned short function_index_offset;
+	/* Used so that it is possible to quickly find this function
+	 * in the inherited program.
+	 */
+	unsigned short type; /* Return type of function. See below. */
 };
 
-struct variable {
-    char *name;
-    unsigned short type;	/* Type of variable. See below. TYPE_ */
-    unsigned short flags;	/* Facts found by the compiler. NAME_ */
+struct variable
+{
+	char* name;
+	unsigned short type; /* Type of variable. See below. TYPE_ */
+	unsigned short flags; /* Facts found by the compiler. NAME_ */
 };
 
-struct inherit {
-    struct program *prog;
-    unsigned short function_index_offset;
-    unsigned short variable_index_offset;
+struct inherit
+{
+	struct program* prog;
+	unsigned short function_index_offset;
+	unsigned short variable_index_offset;
 };
 
-struct program {
-    int ref;				/* Reference count */
+struct program
+{
+	int ref; /* Reference count */
 #ifdef DEBUG
     int extra_ref;			/* Used to verify ref count */
 #endif
-    char *program;			/* The binary instructions */
-    char *name;				/* Name of file that defined prog */
-    int  id_number;			/* used to associate information with
-					  this prog block without needing to
-					   increase the reference count     */
-    unsigned short *line_numbers;	/* Line number information */
-    struct function *functions;
-    char **strings;			/* All strings uses by the program */
-    struct variable *variable_names;	/* All variables defined */
-    struct inherit *inherit;		/* List of inherited prgms */
-    int total_size;			/* Sum of all data in this struct */
-    int heart_beat;			/* Index of the heart beat function.
-					 * -1 means no heart beat
-					 */
-    /*
-     * The types of function arguments are saved where 'argument_types'
-     * points. It can be a variable number of arguments, so allocation
-     * is done dynamically. To know where first argument is found for
-     * function 'n' (number of function), use 'type_start[n]'.
-     * These two arrays will only be allocated if '#pragma save_types' has
-     * been specified. This #pragma should be specified in files that are
-     * commonly used for inheritance. There are several lines of code
-     * that depends on the type length (16 bits) of 'type_start' (sorry !).
-     */
-    unsigned short *argument_types;
+	char* program; /* The binary instructions */
+	char* name; /* Name of file that defined prog */
+	int id_number; /* used to associate information with
+	 this prog block without needing to
+	 increase the reference count     */
+	unsigned short* line_numbers; /* Line number information */
+	struct function* functions;
+	char** strings; /* All strings uses by the program */
+	struct variable* variable_names; /* All variables defined */
+	struct inherit* inherit; /* List of inherited prgms */
+	int total_size; /* Sum of all data in this struct */
+	int heart_beat; /* Index of the heart beat function.
+	 * -1 means no heart beat
+	 */
+	/*
+	 * The types of function arguments are saved where 'argument_types'
+	 * points. It can be a variable number of arguments, so allocation
+	 * is done dynamically. To know where first argument is found for
+	 * function 'n' (number of function), use 'type_start[n]'.
+	 * These two arrays will only be allocated if '#pragma save_types' has
+	 * been specified. This #pragma should be specified in files that are
+	 * commonly used for inheritance. There are several lines of code
+	 * that depends on the type length (16 bits) of 'type_start' (sorry !).
+	 */
+	unsigned short* argument_types;
 #define INDEX_START_NONE		65535
-    unsigned short *type_start;
-    /*
-     * And now some general size information.
-     */
-    unsigned short program_size;	/* size of this instruction code */
-    unsigned short num_functions;
-    unsigned short num_strings;
-    unsigned short num_variables;
-    unsigned short num_inherited;
+	unsigned short* type_start;
+	/*
+	 * And now some general size information.
+	 */
+	unsigned short program_size; /* size of this instruction code */
+	unsigned short num_functions;
+	unsigned short num_strings;
+	unsigned short num_variables;
+	unsigned short num_inherited;
 };
 
-extern struct program *current_prog;
+extern struct program* current_prog;
 
 /*
  * Types available. The number '0' is valid as any type. These types

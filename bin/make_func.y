@@ -77,7 +77,7 @@ optional_default: DEFAULT ':' ID { $$ = $3; } | /* empty */ { $$="0"; } ;
 
 func: type ID optional_ID '(' arg_list optional_default ')' ';'
     {
-	char buff[525];
+	char buff[2048];
 	char f_name[500];
 	int i;
 	if (min_arg == -1)
@@ -126,6 +126,8 @@ func: type ID optional_ID '(' arg_list optional_default ')' ';'
 	strcpy(key[num_buff], $2);
 	buf[num_buff] = (char *) malloc(strlen(buff) + 1);
 	strcpy(buf[num_buff], buff);
+	  
+	  
         num_buff++;
 	min_arg = -1;
 	limit_max = 0;

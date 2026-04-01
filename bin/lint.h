@@ -68,7 +68,7 @@ int _flsbuf();
 int fork(void);
 int wait(int*);
 //int execl(char *, char *, ...);
-int pipe(int*);
+int pipe(int[2]);
 int dup2(int, int);
 int vfork(void);
 //void free(char *);

@@ -251,8 +251,9 @@ regexp* regcomp(exp, excompat)
 	if (exp == (char*) NULL)
 		FAIL("NULL argument");
 
-	exp2 = (short*) xalloc(
-			(strlen(exp) + 1) * (sizeof(short[8]) / sizeof(char[8])));
+	// exp2 = (short*) xalloc(
+	// 		(strlen(exp) + 1) * (sizeof(short[8]) / sizeof(char[8])));
+	exp2 = (short*) xalloc((strlen(exp) + 1) * sizeof(short));
 	for (scan = exp, dest = exp2; (c = *scan++);)
 	{
 		switch (c)

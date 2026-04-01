@@ -20,10 +20,10 @@ MALLOC=sysmalloc
 #
 # Set MUD_LIB to the directory which contains the mud data. Was formerly
 # defined in config.h !
-MUD_LIB = /home/dave/git/LPMud.c/lib
+MUD_LIB = /home/dave/git/lpmud.c/lib
 #
 # Set BINDIR to the directory where you want to install the executables.
-BINDIR = /home/dave/git/LPMud.c/bin
+BINDIR = /home/dave/git/lpumd.c/bin
 #
 # Define what random number generator to use.
 # If no one is specified, a guaranteed bad one will be used.
@@ -78,8 +78,9 @@ OBJ=lang.o lex.o main.o interpret.o simulate.o object.o backend.o array.o\
     call_out.o otable.o dumpstat.o stralloc.o hash.o indentp.o port.o\
     access_check.o clilib.o parse_old.o parse.o simul_efun.o
 
-driver: $(OBJ)
-	-mv driver driver.old
+# Modified the driver target to remove redundant compilation.
+driver: $(OBJ)	
+	@[ -f driver ] && mv driver driver.old || true
 	$(CC) $(CFLAGS) $(OBJ) -o driver $(LIBS) -lcrypt
 
 list_funcs: func_spec.c
@@ -141,10 +142,15 @@ wiz_list.o: wiz_list.h interpret.h
 main.o: config.h object.h interpret.h lex.h
 
 clean:
-	-rm -f *.o lang.h lang.c lexical.c mon.out *.ln tags
-	-rm -f parse core frontend mudlib/core mudlib/debug.log TAGS frontend.c
-	-rm -f config.status lpmud.log
-	(cd util ; echo "Cleaning in util." ; $(MAKE) clean)
+	@rm -f *.o lang.h lang.c lexical.c mon.out *.ln tags 2>/dev/null || true
+	@rm -f parse core frontend mudlib/core mudlib/debug.log TAGS frontend.c 2>/dev/null || true
+	@rm -f config.status lpmud.log 2>/dev/null || true
+	@rm -f driver driver.old 2>/dev/null || true
+	@rm -f make_func 2>/dev/null || true
+	@if [ -d util ]; then \
+		(cd util ; echo "Cleaning in util." ; $(MAKE) clean) ; \
+	fi
+	
 
 frontend: comm2.o frontend.o
 	$(CC) $(CFLAGS) comm2.o frontend.o -o frontend $(LIBS)
@@ -199,3 +205,4 @@ lang.y efun_defs.h: func_spec.c make_func prelang.y postlang.y config.h
 	./make_func > efun_defs.h
 
 simul_efun.o: interpret.h object.h exec.h
+
